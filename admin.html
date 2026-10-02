@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SDMK GLOBAL - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #e3f4f6;
+        --secondary-color: #dde0e5;
+        --primary-text-color: #353f45;
+        --secondary-text-color: #686f73;
+        --primary-button-color: #14b3ae;
+        --secondary-button-color: #cedc27;
+        --chevron-color: #40ae87;
+        --success: #2e8b57;
+        --warning: #b7791f;
+        --danger: #c0564e;
+        --sidebar-width: 256px;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        color: var(--primary-text-color);
+        background: #f7f9fa;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button, input, select, textarea { font: inherit; }
+      button { cursor: pointer; }
+
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+        font-size: 21px;
+        line-height: 1;
+      }
+
+      .app-shell { min-height: 100vh; }
+
+      .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 20;
+        display: flex;
+        width: var(--sidebar-width);
+        flex-direction: column;
+        overflow: hidden;
+        border-right: 1px solid #e3e7e8;
+        background: #fff;
+        box-shadow: 5px 0 18px rgba(53, 63, 69, 0.06);
+        transition: width 180ms ease;
+      }
+
+      .brand {
+        display: flex;
+        min-height: 78px;
+        align-items: center;
+        gap: 12px;
+        padding: 0 21px;
+        border-bottom: 1px solid #edf0f0;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 37px;
+        height: 37px;
+        flex: 0 0 37px;
+        place-items: center;
+        border-radius: 9px;
+        color: #fff;
+        background: var(--primary-button-color);
+      }
+
+      .brand h1 { margin: 0; font-size: 17px; letter-spacing: 0; }
+      .brand p { margin: 3px 0 0; color: var(--secondary-text-color); font-size: 11px; }
+
+      .nav { flex: 1; padding: 18px 12px; overflow-y: auto; }
+      .nav-label { margin: 5px 10px 9px; color: #8d969a; font-size: 10px; font-weight: 700; letter-spacing: .7px; }
+      .nav-label.spaced { margin-top: 24px; }
+
+      .nav-item {
+        display: flex;
+        width: 100%;
+        min-height: 43px;
+        align-items: center;
+        gap: 12px;
+        margin: 3px 0;
+        padding: 0 11px;
+        border: 0;
+        border-radius: 8px;
+        color: #5f6a6f;
+        background: transparent;
+        text-align: left;
+      }
+
+      .nav-item:hover { background: #f2f5f5; }
+      .nav-item.active { color: #147d64; background: #d9f2e7; font-weight: 700; }
+      .nav-item .nav-text { flex: 1; font-size: 13px; }
+      .nav-item .nav-count { padding: 2px 7px; border-radius: 999px; color: #4c5a5e; background: #edf1f2; font-size: 10px; }
+      .nav-item.active .nav-count { color: #147d64; background: #bce7d3; }
+
+      .sidebar-footer { padding: 14px 12px 17px; border-top: 1px solid #edf0f0; }
+      .profile { display: flex; align-items: center; gap: 10px; padding: 9px 10px; }
+      .profile-avatar { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; color: #147d64; background: #d9f2e7; font-size: 12px; font-weight: 700; }
+      .profile strong { display: block; font-size: 12px; }
+      .profile span { color: var(--secondary-text-color); font-size: 10px; }
+
+      .sidebar.collapsed { width: 68px; }
+      .sidebar.collapsed .brand { padding: 0 15px; }
+      .sidebar.collapsed .brand-copy, .sidebar.collapsed .nav-label, .sidebar.collapsed .nav-text, .sidebar.collapsed .nav-count, .sidebar.collapsed .profile-copy { display: none; }
+      .sidebar.collapsed .nav { padding: 18px 10px; }
+      .sidebar.collapsed .nav-item { justify-content: center; padding: 0; }
+      .sidebar.collapsed .profile { justify-content: center; padding: 8px 0; }
+
+      .main { min-height: 100vh; margin-left: var(--sidebar-width); transition: margin-left 180ms ease; }
+      .main.is-collapsed { margin-left: 68px; }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        min-height: 78px;
+        align-items: center;
+        gap: 18px;
+        padding: 0 30px;
+        border-bottom: 1px solid #e7eeee;
+        background: rgba(255, 255, 255, .96);
+        backdrop-filter: blur(8px);
+      }
+
+      .icon-button {
+        display: grid;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        place-items: center;
+        border: 1px solid #e3e8e8;
+        border-radius: 7px;
+        color: #536166;
+        background: #fff;
+      }
+
+      .icon-button:hover { color: #087f7a; border-color: #8cd4cf; background: #f1fbfa; }
+      .search { position: relative; max-width: 390px; flex: 1; }
+      .search .material-symbols-outlined { position: absolute; top: 11px; left: 12px; color: #7b888d; font-size: 19px; }
+      .search input { width: 100%; height: 39px; padding: 0 13px 0 39px; border: 1px solid #dfe6e7; border-radius: 7px; outline: none; color: var(--primary-text-color); background: #fbfcfc; font-size: 12px; }
+      .search input:focus { border-color: var(--primary-button-color); box-shadow: 0 0 0 3px rgba(20, 179, 174, .12); }
+      .topbar-spacer { flex: 1; }
+      .ministry-brand { display: flex; align-items: center; gap: 7px; padding-right: 2px; color: #667378; font-size: 10px; }
+      .ministry-brand img { width: 29px; height: 29px; object-fit: contain; }
+      .period { display: flex; align-items: center; gap: 8px; color: var(--secondary-text-color); font-size: 12px; }
+      .period strong { color: var(--primary-text-color); font-weight: 650; }
+      .notification { position: relative; }
+      .notification::after { position: absolute; top: 5px; right: 6px; width: 6px; height: 6px; border: 2px solid #fff; border-radius: 50%; background: #e25d55; content: ""; }
+
+      .content { padding: 28px 30px 36px; }
+      .page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+      .breadcrumb { margin-bottom: 7px; color: #7e898d; font-size: 11px; }
+      .page-heading h2 { margin: 0; color: #2f3c42; font-size: 23px; letter-spacing: 0; }
+      .page-heading p { margin: 6px 0 0; color: var(--secondary-text-color); font-size: 13px; }
+      .header-actions { display: flex; gap: 9px; }
+
+      .button { display: inline-flex; min-height: 37px; align-items: center; justify-content: center; gap: 7px; padding: 0 13px; border: 1px solid transparent; border-radius: 6px; font-size: 12px; font-weight: 650; }
+      .button.secondary { border-color: #cfdddd; color: #466167; background: #fff; }
+      .button.primary { color: #fff; background: var(--primary-button-color); box-shadow: 0 4px 9px rgba(20, 179, 174, .18); }
+      .button.primary:hover { background: #01897b; }
+      .button .material-symbols-outlined { font-size: 18px; }
+
+      .summary-strip { display: grid; grid-template-columns: minmax(270px, 1.5fr) repeat(3, minmax(150px, 1fr)); gap: 14px; margin-bottom: 20px; }
+      .summary-intro { display: flex; min-height: 117px; flex-direction: column; justify-content: space-between; padding: 18px 20px; border-radius: 8px; background: var(--primary-color); }
+      .summary-intro span { color: #167b79; font-size: 12px; font-weight: 700; }
+      .summary-intro strong { max-width: 410px; color: #243d43; font-size: 19px; line-height: 1.25; }
+      .summary-intro small { color: #567277; font-size: 11px; }
+      .stat { min-height: 117px; padding: 17px; border: 1px solid #edf0f1; border-radius: 8px; background: #fff; }
+      .stat-head { display: flex; align-items: center; justify-content: space-between; color: #6f7b7f; font-size: 11px; }
+      .stat-icon { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 7px; }
+      .stat-icon.teal { color: #078d88; background: #e0f7f5; }
+      .stat-icon.lime { color: #647500; background: #f3f8c8; }
+      .stat-icon.orange { color: #a16013; background: #fff0d9; }
+      .stat-value { margin-top: 16px; color: #314047; font-size: 24px; font-weight: 750; }
+      .stat-note { margin-top: 4px; color: #6b777b; font-size: 10px; }
+      .up { color: #25834f; }
+      .attention { color: #a56719; }
+
+      .main-grid { display: grid; grid-template-columns: minmax(0, 1.48fr) minmax(285px, .82fr); gap: 20px; }
+      .panel { min-width: 0; border: 1px solid #e9eeee; border-radius: 8px; background: #fff; }
+      .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 17px 18px 14px; }
+      .panel-header h3 { margin: 0; font-size: 14px; }
+      .panel-header p { margin: 4px 0 0; color: #778287; font-size: 11px; }
+      .text-link { border: 0; color: #128d88; background: transparent; font-size: 11px; font-weight: 650; }
+
+      .pipeline { display: flex; padding: 0 18px 19px; }
+      .stage { position: relative; flex: 1; min-width: 0; padding-right: 13px; }
+      .stage:not(:last-child)::after { position: absolute; top: 19px; right: 1px; left: 55px; height: 2px; background: #d7e2e3; content: ""; }
+      .stage-number { position: relative; z-index: 1; display: grid; width: 40px; height: 40px; place-items: center; border-radius: 50%; color: #078d88; background: #dff5f3; font-size: 13px; font-weight: 750; }
+      .stage:nth-child(2) .stage-number { color: #657300; background: #f0f6c7; }
+      .stage:nth-child(3) .stage-number { color: #9e5c15; background: #ffeed8; }
+      .stage-title { margin: 10px 0 5px; color: #425158; font-size: 11px; font-weight: 700; }
+      .stage-total { color: #2d3b40; font-size: 18px; font-weight: 750; }
+      .stage-detail { margin-top: 4px; color: #7b8589; font-size: 10px; }
+
+      .alerts { padding: 0 18px 15px; }
+      .alert-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-top: 1px solid #eef1f1; }
+      .alert-row:first-child { border-top: 0; }
+      .alert-mark { display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center; border-radius: 50%; }
+      .alert-mark.warning { color: #a56617; background: #fff0db; }
+      .alert-mark.info { color: #087d78; background: #ddf5f3; }
+      .alert-copy { flex: 1; }
+      .alert-copy strong { display: block; color: #47555a; font-size: 11px; }
+      .alert-copy span { display: block; margin-top: 4px; color: #849095; font-size: 10px; line-height: 1.4; }
+      .alert-time { color: #8b9699; font-size: 10px; white-space: nowrap; }
+
+      .lower-grid { display: grid; grid-template-columns: minmax(0, 1.48fr) minmax(285px, .82fr); gap: 20px; margin-top: 20px; }
+      .table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+      th { padding: 11px 17px; color: #fff; background: var(--chevron-color); font-size: 10px; font-weight: 700; text-align: left; }
+      th:first-child { padding-left: 18px; }
+      td { padding: 13px 17px; border-bottom: 1px solid #eef1f2; color: #516067; font-size: 11px; }
+      tbody tr:hover { background: #fbfdfd; }
+      tbody tr:last-child td { border-bottom: 0; }
+      .person { display: flex; align-items: center; gap: 8px; color: #3e4c52; font-weight: 650; }
+      .person-avatar { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; color: #236767; background: #e1f3f3; font-size: 9px; font-weight: 750; }
+      .chip { display: inline-flex; align-items: center; padding: 3px 7px; border-radius: 999px; font-size: 10px; font-weight: 650; }
+      .chip.ready { color: #18764d; background: #dff4e8; }
+      .chip.review { color: #9a5c16; background: #fff0da; }
+      .chip.depart { color: #087c79; background: #dff5f3; }
+      .chip.risk { color: #aa453c; background: #ffe5e2; }
+      .panel-footer { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; border-top: 1px solid #eef1f2; color: #7d898d; font-size: 10px; }
+      .pagination { display: flex; gap: 4px; }
+      .page-dot { display: grid; width: 23px; height: 23px; place-items: center; border: 1px solid #e0e7e8; border-radius: 5px; color: #637176; background: #fff; font-size: 10px; }
+      .page-dot.active { border-color: var(--primary-button-color); color: #fff; background: var(--primary-button-color); }
+
+      .country-list { padding: 0 18px 13px; }
+      .country-row { display: grid; grid-template-columns: 30px minmax(100px, 1fr) 42px; gap: 9px; align-items: center; padding: 11px 0; border-top: 1px solid #eef1f2; }
+      .country-row:first-child { border-top: 0; }
+      .flag { display: grid; width: 28px; height: 22px; place-items: center; border: 1px solid #e4e9e9; border-radius: 4px; background: #fafafa; font-size: 13px; }
+      .country-name { color: #4c5a60; font-size: 11px; font-weight: 650; }
+      .country-bar { height: 5px; margin-top: 7px; overflow: hidden; border-radius: 99px; background: #edf1f1; }
+      .country-bar span { display: block; height: 100%; border-radius: inherit; background: #14b3ae; }
+      .country-total { color: #536167; font-size: 11px; font-weight: 700; text-align: right; }
+
+      .integration-status { padding: 0 18px 17px; }
+      .system-line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #eef1f2; }
+      .system-line:first-child { border-top: 0; }
+      .system-mark { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 7px; color: #177a76; background: #e2f5f3; }
+      .system-copy { flex: 1; }
+      .system-copy strong { display: block; font-size: 11px; }
+      .system-copy span { color: #849095; font-size: 10px; }
+      .status-online { display: inline-flex; align-items: center; gap: 4px; color: #23794c; font-size: 10px; }
+      .status-online::before { width: 6px; height: 6px; border-radius: 50%; background: #3aa76d; content: ""; }
+      .status-pending { color: #a4651a; }
+
+      .modal-backdrop { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(40, 54, 58, .42); }
+      .modal-backdrop.show { display: flex; }
+      .modal { display: flex; width: min(880px, 100%); max-height: min(720px, calc(100vh - 48px)); flex-direction: column; overflow: hidden; border-radius: 8px; background: #fff; box-shadow: 0 22px 60px rgba(31, 47, 50, .28); }
+      .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 22px 17px; border-bottom: 1px solid #e8eeee; }
+      .modal-kicker { margin: 0 0 5px; color: #168781; font-size: 10px; font-weight: 750; letter-spacing: .65px; }
+      .modal-header h3 { margin: 0; font-size: 18px; }
+      .modal-header p { margin: 5px 0 0; color: #748186; font-size: 12px; }
+      .modal-close { display: grid; width: 32px; height: 32px; place-items: center; border: 0; border-radius: 6px; color: #68767b; background: #f2f5f5; }
+      .modal-close:hover { color: #087f7a; background: #e2f5f3; }
+      .form-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding: 16px 22px 0; }
+      .form-step { position: relative; display: flex; align-items: center; gap: 8px; color: #879296; font-size: 11px; font-weight: 650; }
+      .form-step:not(:last-child)::after { position: absolute; top: 14px; right: 8px; left: 31px; height: 2px; background: #dfe7e8; content: ""; }
+      .form-step strong { position: relative; z-index: 1; display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; color: #6f7e83; background: #eaf0f0; font-size: 11px; }
+      .form-step > span { position: relative; z-index: 2; padding-right: 10px; background: #fff; }
+      .form-step.active, .form-step.done { color: #167a75; }
+      .form-step.active strong, .form-step.done strong { color: #fff; background: var(--primary-button-color); }
+      .form-step.done::after { background: var(--primary-button-color); }
+      .form-body { min-height: 340px; padding: 22px; overflow-y: auto; }
+      .step-panel { display: none; }
+      .step-panel.active { display: block; }
+      .step-panel h4 { margin: 0; font-size: 14px; }
+      .step-panel > p { margin: 5px 0 18px; color: #778489; font-size: 12px; }
+      .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+      .field.full { grid-column: 1 / -1; }
+      .field label { display: block; margin-bottom: 6px; color: #4e5b60; font-size: 11px; font-weight: 650; }
+      .field label span { color: #c14e45; }
+      .field input, .field select, .field textarea { width: 100%; height: 38px; padding: 0 10px; border: 1px solid #dce5e6; border-radius: 6px; outline: none; color: #3e4d53; background: #fff; font-size: 12px; }
+      .field textarea { min-height: 84px; padding: 10px; resize: vertical; line-height: 1.45; }
+      .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary-button-color); box-shadow: 0 0 0 3px rgba(20, 179, 174, .11); }
+      .field-help { display: block; margin-top: 5px; color: #849095; font-size: 10px; line-height: 1.4; }
+      .form-intro { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 18px; padding: 12px; border: 1px solid #dcefed; border-radius: 7px; color: #506b70; background: #f4fbfa; font-size: 11px; line-height: 1.45; }
+      .form-intro .material-symbols-outlined { color: #138c87; font-size: 19px; }
+      .actionable-line { cursor: pointer; border-radius: 6px; }
+      .actionable-line:hover { background: #f4fbfa; }
+      .upload-box { display: flex; min-height: 76px; align-items: center; gap: 10px; padding: 12px; border: 1px dashed #9fcfcc; border-radius: 7px; color: #527075; background: #f7fcfc; }
+      .upload-box .material-symbols-outlined { color: #148c87; }
+      .upload-box strong { display: block; font-size: 11px; }
+      .upload-box span { color: #7d8b90; font-size: 10px; }
+      .check-row { display: flex; align-items: flex-start; gap: 9px; padding: 11px 12px; border: 1px solid #e3eaeb; border-radius: 6px; background: #fbfcfc; }
+      .check-row + .check-row { margin-top: 9px; }
+      .check-row input { width: 15px; height: 15px; margin: 1px 0 0; accent-color: var(--primary-button-color); }
+      .check-row strong { display: block; color: #4b595e; font-size: 11px; }
+      .check-row span { display: block; margin-top: 3px; color: #7d898d; font-size: 10px; line-height: 1.4; }
+      .modal-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 22px; border-top: 1px solid #e8eeee; background: #fbfcfc; }
+      .modal-footer .hint { color: #7a878c; font-size: 10px; }
+      .modal-actions { display: flex; gap: 8px; }
+
+      .toast { position: fixed; right: 24px; bottom: 24px; z-index: 50; display: flex; width: min(330px, calc(100vw - 40px)); align-items: center; gap: 10px; padding: 13px 14px; border: 1px solid #bde7e3; border-radius: 8px; color: #21625f; background: #effcfb; box-shadow: 0 12px 32px rgba(48, 74, 77, .15); font-size: 12px; opacity: 0; pointer-events: none; transform: translateY(12px); transition: 180ms ease; }
+      .toast.show { opacity: 1; transform: translateY(0); }
+      .toast .material-symbols-outlined { color: #07988f; }
+
+      @media (max-width: 1080px) {
+        .summary-strip { grid-template-columns: 1.3fr repeat(3, 1fr); }
+        .main-grid, .lower-grid { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 760px) {
+        .sidebar { width: 68px; }
+        .sidebar .brand { padding: 0 15px; }
+        .sidebar .brand-copy, .sidebar .nav-label, .sidebar .nav-text, .sidebar .nav-count, .sidebar .profile-copy { display: none; }
+        .sidebar .nav { padding: 18px 10px; }
+        .sidebar .nav-item { justify-content: center; padding: 0; }
+        .sidebar .profile { justify-content: center; padding: 8px 0; }
+        .main { margin-left: 68px; }
+        .topbar { min-height: 66px; padding: 0 14px; gap: 10px; }
+        .search { max-width: none; }
+        .topbar-spacer, .ministry-brand, .period, .collapse-toggle { display: none; }
+        .content { padding: 20px 15px 28px; }
+        .page-heading { align-items: flex-start; flex-direction: column; margin-bottom: 18px; }
+        .header-actions { width: 100%; }
+        .header-actions .button { flex: 1; }
+        .summary-strip { grid-template-columns: 1fr; }
+        .summary-intro, .stat { min-height: 96px; }
+        .pipeline { gap: 9px; }
+        .stage { padding-right: 0; }
+        .stage:not(:last-child)::after { right: -5px; left: 41px; }
+        .stage-title { min-height: 28px; font-size: 10px; }
+        .panel-header { padding-right: 14px; padding-left: 14px; }
+        .modal-backdrop { padding: 12px; }
+        .modal { max-height: calc(100vh - 24px); }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-step { font-size: 9px; }
+        .form-step:not(:last-child)::after { right: 4px; left: 29px; }
+      }
+    </style>
+      <link rel="stylesheet" href="assets/hero-slider.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <div class="brand-mark"><span class="material-symbols-outlined">public</span></div>
+          <div class="brand-copy"><h1>SDMK GLOBAL</h1><p>Mobilitas Global SDMK</p></div>
+        </div>
+
+        <nav class="nav" aria-label="Navigasi utama">
+          <p class="nav-label">MENU UTAMA</p>
+          <button class="nav-item active" data-page="Dashboard"><span class="material-symbols-outlined">space_dashboard</span><span class="nav-text">Dashboard</span></button>
+          <button class="nav-item" data-page="Nakes Global"><span class="material-symbols-outlined">group</span><span class="nav-text">Nakes Global</span><span class="nav-count">2.486</span></button>
+          <button class="nav-item" data-page="Pra-Keberangkatan"><span class="material-symbols-outlined">checklist</span><span class="nav-text">Pra-Keberangkatan</span><span class="nav-count">174</span></button>
+          <button class="nav-item" data-page="Penempatan LN"><span class="material-symbols-outlined">flight_takeoff</span><span class="nav-text">Penempatan LN</span></button>
+          <button class="nav-item" data-page="Monitoring"><span class="material-symbols-outlined">monitoring</span><span class="nav-text">Monitoring</span><span class="nav-count">8</span></button>
+          <button class="nav-item" data-page="Re-entry dan SKP"><span class="material-symbols-outlined">assignment_turned_in</span><span class="nav-text">Re-entry dan SKP</span></button>
+
+          <p class="nav-label spaced">PENGELOLAAN</p>
+          <button class="nav-item" data-page="Portal CMS"><span class="material-symbols-outlined">photo_library</span><span class="nav-text">Portal CMS</span></button>
+          <button class="nav-item" data-page="Program dan Pelatihan"><span class="material-symbols-outlined">school</span><span class="nav-text">Program dan Pelatihan</span></button>
+          <button class="nav-item" data-page="Mitra Penempatan"><span class="material-symbols-outlined">handshake</span><span class="nav-text">Mitra Penempatan</span></button>
+          <button class="nav-item" data-page="Integrasi"><span class="material-symbols-outlined">hub</span><span class="nav-text">Integrasi</span></button>
+          <button class="nav-item" data-page="Laporan Strategis"><span class="material-symbols-outlined">analytics</span><span class="nav-text">Laporan Strategis</span></button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="profile">
+            <div class="profile-avatar">HA</div>
+            <div class="profile-copy"><strong>Harmanto A.</strong><span>Administrator Pusat</span></div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main" id="mainContent">
+        <header class="topbar">
+          <button class="icon-button collapse-toggle" id="collapseButton" title="Ciutkan sidebar" aria-label="Ciutkan sidebar"><span class="material-symbols-outlined">left_panel_close</span></button>
+          <label class="search"><span class="material-symbols-outlined">search</span><input id="globalSearch" type="search" placeholder="Cari nama, profesi, atau negara" /></label>
+          <div class="topbar-spacer"></div>
+          <div class="ministry-brand"><img src="assets/logo-kemenkes.png" alt="Kementerian Kesehatan" /><span>Kementerian Kesehatan</span></div>
+          <div class="period"><span class="material-symbols-outlined">calendar_today</span><strong>26 Agustus 2026</strong></div>
+          <button class="icon-button notification" id="notificationButton" title="Notifikasi" aria-label="Notifikasi"><span class="material-symbols-outlined">notifications</span></button>
+        </header>
+
+        <section class="content">
+          <div class="page-heading">
+            <div>
+              <div class="breadcrumb">Beranda / <span id="breadcrumbPage">Dashboard</span></div>
+              <h2 id="pageTitle">Dashboard Mobilitas Global</h2>
+              <p id="pageDescription">Ringkasan kesiapan, penempatan, dan perlindungan tenaga kesehatan Indonesia.</p>
+            </div>
+            <div class="header-actions">
+              <button class="button secondary" id="downloadButton"><span class="material-symbols-outlined">download</span>Unduh laporan</button>
+              <button class="button primary" id="registerButton"><span class="material-symbols-outlined">person_add</span>Registrasi Nakes</button>
+            </div>
+          </div>
+
+          <div id="dynamicContent">
+          <section class="summary-strip" aria-label="Ringkasan utama">
+            <div class="summary-intro">
+              <span>SATU DATA MOBILITAS GLOBAL</span>
+              <strong>Setiap perjalanan Nakes, terpantau dari kesiapan sampai kembali berkarya.</strong>
+              <small>Data tersinkronisasi per 26 Agustus 2026, 08.30 WIB</small>
+            </div>
+            <div class="stat">
+              <div class="stat-head"><span>Nakes terdaftar</span><span class="stat-icon teal material-symbols-outlined">groups</span></div>
+              <div class="stat-value">2.486</div>
+              <div class="stat-note"><span class="up">+12,4%</span> dibanding bulan lalu</div>
+            </div>
+            <div class="stat">
+              <div class="stat-head"><span>Aktif di luar negeri</span><span class="stat-icon lime material-symbols-outlined">public</span></div>
+              <div class="stat-value">1.128</div>
+              <div class="stat-note">Tersebar di 18 negara tujuan</div>
+            </div>
+            <div class="stat">
+              <div class="stat-head"><span>Perlu tindak lanjut</span><span class="stat-icon orange material-symbols-outlined">priority_high</span></div>
+              <div class="stat-value">8</div>
+              <div class="stat-note"><span class="attention">3 kasus</span> menunggu pembaruan</div>
+            </div>
+          </section>
+
+          <section class="main-grid">
+            <article class="panel">
+              <div class="panel-header"><div><h3>Alur Mobilitas Nakes</h3><p>Posisi peserta pada tahapan pendayagunaan</p></div><button class="text-link" data-toast="Membuka daftar seluruh peserta">Lihat seluruh peserta</button></div>
+              <div class="pipeline">
+                <div class="stage"><div class="stage-number">174</div><div class="stage-title">Pra-Keberangkatan</div><div class="stage-total">174</div><div class="stage-detail">38 siap berangkat</div></div>
+                <div class="stage"><div class="stage-number">1.128</div><div class="stage-title">Penempatan Aktif</div><div class="stage-total">1.128</div><div class="stage-detail">18 negara tujuan</div></div>
+                <div class="stage"><div class="stage-number">96</div><div class="stage-title">Re-entry dan SKP</div><div class="stage-total">96</div><div class="stage-detail">42 menunggu validasi</div></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header"><div><h3>Perlu Perhatian</h3><p>Notifikasi prioritas hari ini</p></div><button class="text-link" data-toast="Membuka semua notifikasi">Semua</button></div>
+              <div class="alerts">
+                <div class="alert-row"><div class="alert-mark warning"><span class="material-symbols-outlined">description</span></div><div class="alert-copy"><strong>13 dokumen hampir kedaluwarsa</strong><span>STR, sertifikat kompetensi, atau kontrak kerja</span></div><div class="alert-time">09.10</div></div>
+                <div class="alert-row"><div class="alert-mark info"><span class="material-symbols-outlined">sync</span></div><div class="alert-copy"><strong>Sinkronisasi data SiskoP2MI selesai</strong><span>24 data keberangkatan baru sudah diperbarui</span></div><div class="alert-time">08.30</div></div>
+                <div class="alert-row"><div class="alert-mark warning"><span class="material-symbols-outlined">support_agent</span></div><div class="alert-copy"><strong>3 laporan perlindungan menunggu tindak lanjut</strong><span>Kasus aktif dari Jepang dan Arab Saudi</span></div><div class="alert-time">Kemarin</div></div>
+              </div>
+            </article>
+          </section>
+
+          <section class="lower-grid">
+            <article class="panel">
+              <div class="panel-header"><div><h3>Peserta Terbaru</h3><p>Pemutakhiran registrasi dan penempatan terakhir</p></div><button class="text-link" data-toast="Membuka daftar Nakes Global">Kelola Nakes</button></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Nama dan Profesi</th><th>Negara Tujuan</th><th>Tahap</th><th>Status</th><th>Pembaruan</th></tr></thead>
+                  <tbody>
+                    <tr><td><div class="person"><span class="person-avatar">DN</span>dr. Dita Nirmala</div><span style="color:#849095;font-size:10px">Dokter Spesialis Anak</span></td><td>Jepang</td><td>Pra-keberangkatan</td><td><span class="chip ready">Siap berangkat</span></td><td>10 menit lalu</td></tr>
+                    <tr><td><div class="person"><span class="person-avatar">RA</span>Rizki Ardiansyah</div><span style="color:#849095;font-size:10px">Perawat</span></td><td>Jerman</td><td>Penempatan</td><td><span class="chip depart">Aktif</span></td><td>35 menit lalu</td></tr>
+                    <tr><td><div class="person"><span class="person-avatar">SA</span>Siti Amalia</div><span style="color:#849095;font-size:10px">Bidan</span></td><td>Arab Saudi</td><td>Re-entry dan SKP</td><td><span class="chip review">Validasi SKP</span></td><td>1 jam lalu</td></tr>
+                    <tr><td><div class="person"><span class="person-avatar">FK</span>Fajar Kusuma</div><span style="color:#849095;font-size:10px">Fisioterapis</span></td><td>Singapura</td><td>Penempatan</td><td><span class="chip risk">Perlu tindak lanjut</span></td><td>2 jam lalu</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="panel-footer"><span>Menampilkan 1-4 dari 2.486 peserta</span><div class="pagination"><button class="page-dot" aria-label="Halaman sebelumnya">&lt;</button><button class="page-dot active">1</button><button class="page-dot">2</button><button class="page-dot">&gt;</button></div></div>
+            </article>
+
+            <div style="display:grid;gap:20px">
+              <article class="panel">
+                <div class="panel-header"><div><h3>Negara Tujuan Teratas</h3><p>Penempatan aktif per negara</p></div><button class="text-link" data-toast="Membuka peta persebaran">Detail</button></div>
+                <div class="country-list">
+                  <div class="country-row"><div class="flag">JP</div><div><div class="country-name">Jepang</div><div class="country-bar"><span style="width:100%"></span></div></div><div class="country-total">382</div></div>
+                  <div class="country-row"><div class="flag">DE</div><div><div class="country-name">Jerman</div><div class="country-bar"><span style="width:76%"></span></div></div><div class="country-total">291</div></div>
+                  <div class="country-row"><div class="flag">SA</div><div><div class="country-name">Arab Saudi</div><div class="country-bar"><span style="width:54%"></span></div></div><div class="country-total">207</div></div>
+                  <div class="country-row"><div class="flag">SG</div><div><div class="country-name">Singapura</div><div class="country-bar"><span style="width:37%"></span></div></div><div class="country-total">142</div></div>
+                </div>
+              </article>
+              <article class="panel">
+                <div class="panel-header"><div><h3>Status Integrasi</h3><p>Konektivitas sumber data</p></div><button class="text-link" data-toast="Membuka pengaturan integrasi">Kelola</button></div>
+                <div class="integration-status">
+                  <div class="system-line"><div class="system-mark"><span class="material-symbols-outlined">health_and_safety</span></div><div class="system-copy"><strong>SATUSEHAT SDMK</strong><span>Sinkronisasi terakhir 08.24 WIB</span></div><span class="status-online">Terhubung</span></div>
+                  <div class="system-line"><div class="system-mark"><span class="material-symbols-outlined">flight</span></div><div class="system-copy"><strong>SiskoP2MI</strong><span>Sinkronisasi terakhir 08.30 WIB</span></div><span class="status-online">Terhubung</span></div>
+                  <div class="system-line"><div class="system-mark"><span class="material-symbols-outlined">language</span></div><div class="system-copy"><strong>Peduli WNI</strong><span>Menunggu otorisasi pembaruan</span></div><span class="status-online status-pending">Tertunda</span></div>
+                </div>
+              </article>
+            </div>
+          </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="nakesModal" role="dialog" aria-modal="true" aria-labelledby="nakesModalTitle">
+      <form class="modal" id="nakesForm">
+        <div class="modal-header">
+          <div><p class="modal-kicker">REGISTRASI NAKES GLOBAL</p><h3 id="nakesModalTitle">Registrasi Tenaga Kesehatan</h3><p>Lengkapi data untuk memulai proses verifikasi dan persiapan penempatan.</p></div>
+          <button class="modal-close" type="button" id="closeNakesModal" aria-label="Tutup formulir"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="form-steps" aria-label="Tahapan registrasi">
+          <div class="form-step active" data-step-indicator="1"><strong>1</strong><span>Profil dan Profesi</span></div>
+          <div class="form-step" data-step-indicator="2"><strong>2</strong><span>Dokumen dan Kompetensi</span></div>
+          <div class="form-step" data-step-indicator="3"><strong>3</strong><span>Preferensi Penempatan</span></div>
+        </div>
+        <div class="form-body">
+          <section class="step-panel active" data-step-panel="1">
+            <h4>Profil dan profesi</h4><p>Data ini menjadi identitas utama Nakes pada hub mobilitas global.</p>
+            <div class="form-grid">
+              <div class="field full"><label>Nama lengkap sesuai identitas <span>*</span></label><input required type="text" placeholder="Contoh: dr. Maya Utami" /></div>
+              <div class="field"><label>NIK <span>*</span></label><input required inputmode="numeric" placeholder="16 digit NIK" /></div>
+              <div class="field"><label>Email aktif <span>*</span></label><input required type="email" placeholder="nama@email.com" /></div>
+              <div class="field"><label>Profesi <span>*</span></label><select required><option value="">Pilih profesi</option><option>Dokter</option><option>Dokter Spesialis</option><option>Perawat</option><option>Bidan</option><option>Fisioterapis</option></select></div>
+              <div class="field"><label>Institusi pendidikan</label><input type="text" placeholder="Nama institusi pendidikan" /></div>
+            </div>
+          </section>
+          <section class="step-panel" data-step-panel="2">
+            <h4>Dokumen dan kompetensi</h4><p>Dokumen akan divalidasi melalui integrasi SATUSEHAT SDMK dan proses verifikasi petugas.</p>
+            <div class="form-grid">
+              <div class="field"><label>Nomor STR <span>*</span></label><input required type="text" placeholder="Nomor STR aktif" /></div>
+              <div class="field"><label>Masa berlaku STR <span>*</span></label><input required type="date" /></div>
+              <div class="field"><label>Nomor sertifikat kompetensi</label><input type="text" placeholder="Nomor sertifikat" /></div>
+              <div class="field"><label>Kemampuan bahasa</label><select><option value="">Pilih bahasa utama</option><option>Bahasa Jepang</option><option>Bahasa Jerman</option><option>Bahasa Inggris</option><option>Bahasa Arab</option></select></div>
+              <div class="field full"><div class="upload-box"><span class="material-symbols-outlined">upload_file</span><div><strong>Unggah STR, sertifikat kompetensi, dan hasil uji bahasa</strong><span>PDF atau JPG, maksimal 5 MB per dokumen</span></div></div></div>
+            </div>
+          </section>
+          <section class="step-panel" data-step-panel="3">
+            <h4>Preferensi penempatan</h4><p>Pilihan ini digunakan untuk mengarahkan program pembekalan dan peluang yang sesuai.</p>
+            <div class="form-grid">
+              <div class="field"><label>Negara tujuan prioritas <span>*</span></label><select required><option value="">Pilih negara</option><option>Jepang</option><option>Jerman</option><option>Singapura</option><option>Arab Saudi</option></select></div>
+              <div class="field"><label>Skema yang diminati <span>*</span></label><select required><option value="">Pilih skema</option><option>Government to Government</option><option>Mitra swasta terverifikasi</option><option>Fellowship atau magang</option></select></div>
+              <div class="field full"><label>Kontak darurat <span>*</span></label><input required type="text" placeholder="Nama, hubungan, dan nomor telepon" /></div>
+              <div class="field full"><div class="check-row"><input id="consentData" required type="checkbox" /><label for="consentData"><strong>Persetujuan pemrosesan data</strong><span>Nakes menyetujui pemrosesan data untuk registrasi, verifikasi, dan pendayagunaan ke luar negeri.</span></label></div><div class="check-row"><input id="consentUpdate" type="checkbox" /><label for="consentUpdate"><strong>Kesediaan pemutakhiran data</strong><span>Nakes bersedia memperbarui status penempatan dan pengalaman kerja selama berada di luar negeri.</span></label></div></div>
+            </div>
+          </section>
+        </div>
+        <div class="modal-footer"><span class="hint" id="formHint">Langkah 1 dari 3: lengkapi profil dan profesi.</span><div class="modal-actions"><button class="button secondary" type="button" id="prevStep" hidden>Kembali</button><button class="button primary" type="button" id="nextStep">Lanjutkan</button></div></div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop" id="operationalModal" role="dialog" aria-modal="true" aria-labelledby="operationalModalTitle">
+      <form class="modal" id="operationalForm">
+        <div class="modal-header">
+          <div><p class="modal-kicker" id="operationalModalKicker">OPERASI SDMK GLOBAL</p><h3 id="operationalModalTitle">Form Operasional</h3><p id="operationalModalDescription">Lengkapi informasi yang dibutuhkan.</p></div>
+          <button class="modal-close" type="button" id="closeOperationalModal" aria-label="Tutup formulir"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="form-body" id="operationalFormBody"></div>
+        <div class="modal-footer"><span class="hint" id="operationalFormHint">Field bertanda * wajib diisi.</span><div class="modal-actions"><button class="button secondary" type="button" id="cancelOperationalForm">Batal</button><button class="button primary" type="submit" id="saveOperationalForm">Simpan</button></div></div>
+      </form>
+    </div>
+
+    <div class="toast" id="toast"><span class="material-symbols-outlined">check_circle</span><span id="toastText">Aksi mockup berhasil dijalankan.</span></div>
+
+    <script src="assets/hero-content.js"></script>
+    <script src="assets/hero-cms.js"></script>
+    <script>
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      const collapseButton = document.getElementById('collapseButton');
+      const pageTitle = document.getElementById('pageTitle');
+      const breadcrumbPage = document.getElementById('breadcrumbPage');
+      const pageDescription = document.getElementById('pageDescription');
+      const dynamicContent = document.getElementById('dynamicContent');
+      const registerButton = document.getElementById('registerButton');
+      const nakesModal = document.getElementById('nakesModal');
+      const nakesForm = document.getElementById('nakesForm');
+      const formHint = document.getElementById('formHint');
+      const prevStep = document.getElementById('prevStep');
+      const nextStep = document.getElementById('nextStep');
+      const operationalModal = document.getElementById('operationalModal');
+      const operationalForm = document.getElementById('operationalForm');
+      const operationalModalKicker = document.getElementById('operationalModalKicker');
+      const operationalModalTitle = document.getElementById('operationalModalTitle');
+      const operationalModalDescription = document.getElementById('operationalModalDescription');
+      const operationalFormBody = document.getElementById('operationalFormBody');
+      const operationalFormHint = document.getElementById('operationalFormHint');
+      const saveOperationalForm = document.getElementById('saveOperationalForm');
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      const dashboardMarkup = dynamicContent.innerHTML;
+      let currentPage = 'Dashboard';
+      let formStep = 1;
+      let toastTimer;
+
+      const selectOptions = {
+        countries: '<option value="">Pilih negara</option><option>Jepang</option><option>Jerman</option><option>Singapura</option><option>Arab Saudi</option><option>Negara lainnya</option>',
+        schemes: '<option value="">Pilih skema</option><option>PMI Kesehatan</option><option>Bakti Sosial LN</option><option>Magang</option><option>Professional Development</option><option>Fellowship</option>'
+      };
+
+      const actionForms = {
+        'Pra-Keberangkatan': {
+          kicker: 'PRA-KEBERANGKATAN', title: 'Buat Batch Pra-Keberangkatan', description: 'Kelompokkan peserta untuk proses verifikasi, pembekalan, dan persetujuan keberangkatan.', submit: 'Buat Batch', success: 'Batch pra-keberangkatan berhasil dibuat.',
+          fields: `<div class="field full"><label>Nama batch <span>*</span></label><input required name="batchName" placeholder="Contoh: Batch Jepang September 2026" /></div><div class="field"><label>Skema <span>*</span></label><select required name="scheme">${selectOptions.schemes}</select></div><div class="field"><label>Negara tujuan <span>*</span></label><select required name="country">${selectOptions.countries}</select></div><div class="field"><label>Tanggal mulai <span>*</span></label><input required name="startDate" type="date" /></div><div class="field"><label>Target keberangkatan <span>*</span></label><input required name="departureDate" type="date" /></div><div class="field"><label>Penanggung jawab <span>*</span></label><input required name="owner" placeholder="Nama PIC atau unit kerja" /></div><div class="field"><label>Kapasitas peserta <span>*</span></label><input required name="capacity" type="number" min="1" placeholder="Contoh: 40" /></div><div class="field full"><label>Catatan batch</label><textarea name="notes" placeholder="Kriteria peserta, mitra pelaksana, atau catatan khusus"></textarea></div>`
+        },
+        'Penempatan LN': {
+          kicker: 'KEBERANGKATAN DAN PENEMPATAN', title: 'Catat Keberangkatan', description: 'Rekam keberangkatan peserta yang telah menyelesaikan seluruh persyaratan.', submit: 'Simpan Keberangkatan', success: 'Keberangkatan berhasil dicatat dan status peserta diperbarui.',
+          fields: `<div class="field full"><label>Nama Nakes <span>*</span></label><select required name="participant"><option value="">Pilih peserta siap berangkat</option><option>Dita Nirmala — Jepang</option><option>Ari Nugroho — Jepang</option><option>Rina Safitri — Singapura</option></select></div><div class="field"><label>Batch pra-keberangkatan <span>*</span></label><select required name="batch"><option value="">Pilih batch</option><option>Batch Jepang September 2026</option><option>Batch Singapura Q3 2026</option><option>Batch Jerman Oktober 2026</option></select></div><div class="field"><label>Tanggal dan waktu berangkat <span>*</span></label><input required name="departureAt" type="datetime-local" /></div><div class="field"><label>Bandara keberangkatan <span>*</span></label><input required name="airport" placeholder="Contoh: Soekarno-Hatta" /></div><div class="field"><label>Nomor penerbangan</label><input name="flightNumber" placeholder="Contoh: JL 726" /></div><div class="field"><label>Negara tujuan <span>*</span></label><select required name="country">${selectOptions.countries}</select></div><div class="field"><label>Fasilitas tujuan <span>*</span></label><input required name="facility" placeholder="Nama rumah sakit atau institusi" /></div><div class="field full"><label>Kontak penjemput/PIC tujuan <span>*</span></label><input required name="destinationContact" placeholder="Nama, organisasi, dan nomor kontak" /></div>`
+        },
+        'Monitoring': {
+          kicker: 'MONITORING DAN PELINDUNGAN', title: 'Buat Kasus Pelindungan', description: 'Catat laporan, tentukan prioritas, dan arahkan kasus kepada pihak yang menangani.', submit: 'Buat Kasus', success: 'Kasus berhasil dibuat dan masuk antrean tindak lanjut.',
+          fields: `<div class="field"><label>Nakes atau pelapor <span>*</span></label><input required name="reporter" placeholder="Cari nama atau masukkan pelapor" /></div><div class="field"><label>Negara kejadian <span>*</span></label><select required name="country">${selectOptions.countries}</select></div><div class="field"><label>Kategori kasus <span>*</span></label><select required name="category"><option value="">Pilih kategori</option><option>Kontrak atau ketenagakerjaan</option><option>Kesehatan</option><option>Dokumen dan izin tinggal</option><option>Kekerasan atau keselamatan</option><option>Kondisi darurat lainnya</option></select></div><div class="field"><label>Tingkat prioritas <span>*</span></label><select required name="priority"><option value="">Pilih prioritas</option><option>Kritis — respons segera</option><option>Tinggi — maksimal 4 jam</option><option>Sedang — maksimal 24 jam</option><option>Rendah — maksimal 3 hari</option></select></div><div class="field"><label>Instansi tujuan eskalasi <span>*</span></label><select required name="assignee"><option value="">Pilih instansi</option><option>Kemlu / Perwakilan RI</option><option>KP2MI</option><option>Mitra penempatan</option><option>Pusat Krisis Kemenkes</option></select></div><div class="field"><label>Kontak yang dapat dihubungi <span>*</span></label><input required name="contact" placeholder="Nomor telepon atau email" /></div><div class="field full"><label>Kronologi singkat <span>*</span></label><textarea required name="chronology" placeholder="Jelaskan waktu, lokasi, pihak terkait, dan kondisi terkini"></textarea></div><div class="field full"><label>Bukti pendukung</label><input name="evidence" type="file" accept=".pdf,.jpg,.jpeg,.png" /><small class="field-help">PDF, JPG, atau PNG. Pada prototype, file belum benar-benar diunggah.</small></div>`
+        },
+        'Re-entry dan SKP': {
+          kicker: 'REKOGNISI KEGIATAN', title: 'Usulkan Rekognisi SKP', description: 'Ajukan pengalaman atau kegiatan luar negeri untuk dinilai oleh kolegium.', submit: 'Kirim Usulan', success: 'Usulan SKP berhasil dikirim dan menunggu penilaian kolegium.',
+          fields: `<div class="field full"><label>Nama Nakes <span>*</span></label><select required name="participant"><option value="">Pilih Nakes re-entry</option><option>Siti Amalia — Bidan</option><option>Wawan Prakoso — Perawat</option><option>Desi Cahya — Dokter</option></select></div><div class="field"><label>Jenis kegiatan <span>*</span></label><select required name="activityType"><option value="">Pilih kegiatan</option><option>Pengalaman kerja luar negeri</option><option>Pelatihan atau LMS</option><option>Alih IPTEK</option><option>Bakti sosial/pengabdian</option><option>Fellowship atau magang</option></select></div><div class="field"><label>Negara pelaksanaan <span>*</span></label><select required name="country">${selectOptions.countries}</select></div><div class="field"><label>Tanggal mulai <span>*</span></label><input required name="startDate" type="date" /></div><div class="field"><label>Tanggal selesai <span>*</span></label><input required name="endDate" type="date" /></div><div class="field"><label>Durasi/jam kegiatan <span>*</span></label><input required name="duration" type="number" min="1" placeholder="Jumlah jam" /></div><div class="field"><label>SKP yang diusulkan <span>*</span></label><input required name="proposedSkp" type="number" min="1" placeholder="Contoh: 12" /></div><div class="field full"><label>Ringkasan kompetensi <span>*</span></label><textarea required name="competency" placeholder="Jelaskan pekerjaan, pembelajaran, dan kompetensi yang diperoleh"></textarea></div><div class="field full"><label>Dokumen portofolio <span>*</span></label><input required name="portfolio" type="file" accept=".pdf,.jpg,.jpeg,.png" /><small class="field-help">Surat pengalaman, sertifikat, logbook, atau bukti kegiatan.</small></div>`
+        },
+        'Program dan Pelatihan': {
+          kicker: 'PENGEMBANGAN KOMPETENSI', title: 'Tambah Program', description: 'Daftarkan program pembekalan atau peningkatan kompetensi untuk peserta mobilitas global.', submit: 'Simpan Program', success: 'Program berhasil ditambahkan sebagai draft.',
+          fields: `<div class="field full"><label>Nama program <span>*</span></label><input required name="programName" placeholder="Contoh: Bahasa Jepang N4 Batch 3" /></div><div class="field"><label>Jenis program <span>*</span></label><select required name="programType"><option value="">Pilih jenis</option><option>Bahasa negara tujuan</option><option>Orientasi budaya dan etik</option><option>Try-out kompetensi</option><option>Magang</option><option>Professional Development</option><option>Fellowship</option></select></div><div class="field"><label>Penyelenggara/mitra <span>*</span></label><input required name="provider" placeholder="Nama LPK, kolegium, atau institusi" /></div><div class="field"><label>Negara atau mode <span>*</span></label><select required name="location"><option value="">Pilih lokasi</option><option>Indonesia</option><option>Online</option><option>Jepang</option><option>Jerman</option><option>Singapura</option><option>Arab Saudi</option></select></div><div class="field"><label>Kapasitas peserta <span>*</span></label><input required name="capacity" type="number" min="1" placeholder="Contoh: 50" /></div><div class="field"><label>Tanggal mulai <span>*</span></label><input required name="startDate" type="date" /></div><div class="field"><label>Tanggal selesai <span>*</span></label><input required name="endDate" type="date" /></div><div class="field full"><label>Kompetensi/hasil belajar <span>*</span></label><textarea required name="outcome" placeholder="Tuliskan hasil belajar atau kompetensi yang ditargetkan"></textarea></div>`
+        },
+        'Mitra Penempatan': {
+          kicker: 'EKOSISTEM MITRA', title: 'Tambah Mitra', description: 'Daftarkan organisasi yang mendukung persiapan, penempatan, atau pelayanan Nakes.', submit: 'Simpan Mitra', success: 'Mitra berhasil ditambahkan dan menunggu verifikasi.',
+          fields: `<div class="field full"><label>Nama resmi mitra <span>*</span></label><input required name="partnerName" placeholder="Nama badan hukum atau institusi" /></div><div class="field"><label>Jenis mitra <span>*</span></label><select required name="partnerType"><option value="">Pilih jenis</option><option>LPK</option><option>P3MI</option><option>Fasilitas kesehatan luar negeri</option><option>Institusi pendidikan</option><option>Penyelenggara fellowship</option></select></div><div class="field"><label>Negara operasional <span>*</span></label><select required name="country">${selectOptions.countries}</select></div><div class="field"><label>Nomor izin/registrasi <span>*</span></label><input required name="licenseNumber" placeholder="Nomor izin resmi" /></div><div class="field"><label>Masa berlaku izin <span>*</span></label><input required name="validUntil" type="date" /></div><div class="field"><label>Nama PIC <span>*</span></label><input required name="picName" placeholder="Nama penanggung jawab" /></div><div class="field"><label>Email PIC <span>*</span></label><input required name="picEmail" type="email" placeholder="pic@mitra.org" /></div><div class="field full"><label>Alamat dan ruang lingkup layanan <span>*</span></label><textarea required name="scope" placeholder="Alamat kantor serta layanan yang disediakan"></textarea></div>`
+        }
+      };
+
+      const pages = {
+        'Nakes Global': {
+          description: 'Data induk, kelengkapan dokumen, dan kesiapan mobilitas tenaga kesehatan.',
+          action: 'Tambah Nakes', actionIcon: 'person_add', kicker: 'REGISTRASI DAN PROFIL GLOBAL',
+          message: 'Kelola profil tunggal, dokumen, kompetensi, dan preferensi negara tujuan.',
+          stats: [['Total terdaftar', '2.486', 'groups', 'teal'], ['Profil lengkap', '2.119', 'verified_user', 'lime'], ['Perlu verifikasi', '367', 'fact_check', 'orange']],
+          leftTitle: 'Status kelengkapan profil', leftText: 'Kualitas data registrasi Nakes Global', left: [['Lengkap dan tervalidasi', '2.119', '85%'], ['Menunggu verifikasi dokumen', '241', '10%'], ['Perlu pemutakhiran profil', '126', '5%']],
+          tableTitle: 'Daftar Nakes', headers: ['Nama', 'Profesi', 'Negara Minat', 'Dokumen', 'Status'], rows: [['dr. Maya Utami', 'Dokter Umum', 'Jepang', '8/8 lengkap', 'Terverifikasi', 'ready'], ['Andri Wibowo', 'Perawat', 'Jerman', '7/8 lengkap', 'Perlu dokumen', 'review'], ['Nur Aisyah', 'Bidan', 'Arab Saudi', '8/8 lengkap', 'Terverifikasi', 'ready']],
+          sideTitle: 'Verifikasi hari ini', side: [['Dokumen STR', '64 pengajuan baru'], ['Sertifikat kompetensi', '31 menunggu tinjauan'], ['Skor bahasa', '18 perlu pembaruan']]
+        },
+        'Pra-Keberangkatan': {
+          description: 'Kesiapan administratif, kompetensi, dan orientasi sebelum penempatan luar negeri.',
+          action: 'Buat batch', actionIcon: 'add_task', kicker: 'KESIAPAN PRA-KEBERANGKATAN',
+          message: 'Pastikan setiap peserta lulus checklist sebelum memperoleh persetujuan berangkat.',
+          stats: [['Peserta aktif', '174', 'assignment', 'teal'], ['Siap berangkat', '38', 'flight_takeoff', 'lime'], ['Belum lengkap', '52', 'warning', 'orange']],
+          leftTitle: 'Checklist kesiapan batch September', leftText: '174 peserta pada proses penyiapan', left: [['Administratif dan kontrak', '156', '90%'], ['Bahasa dan budaya', '127', '73%'], ['Orientasi pra-pemberangkatan', '86', '49%']],
+          tableTitle: 'Peserta Pra-Keberangkatan', headers: ['Nama', 'Negara', 'Pelatihan', 'Checklist', 'Status'], rows: [['Dita Nirmala', 'Jepang', 'Budaya Jepang', '8/8 selesai', 'Siap berangkat', 'ready'], ['Lukman Hakim', 'Jerman', 'Bahasa B1', '6/8 selesai', 'Dalam proses', 'review'], ['Rina Safitri', 'Singapura', 'Etik Praktik', '7/8 selesai', 'Validasi akhir', 'depart']],
+          sideTitle: 'Agenda terdekat', side: [['Orientasi Jepang', '28 Agustus, 09.00'], ['Try-out Prometric', '29 Agustus, 13.00'], ['Briefing keberangkatan', '02 September, 10.00']]
+        },
+        'Penempatan LN': {
+          description: 'Pengelolaan keberangkatan, kontrak, fasilitas tujuan, dan status penempatan Nakes.',
+          action: 'Catat keberangkatan', actionIcon: 'flight_takeoff', kicker: 'KEBERANGKATAN DAN PENEMPATAN',
+          message: 'Pantau status penempatan aktif dan validitas kontrak di setiap negara tujuan.',
+          stats: [['Penempatan aktif', '1.128', 'public', 'teal'], ['Berangkat bulan ini', '57', 'connecting_airports', 'lime'], ['Kontrak berakhir', '24', 'event_busy', 'orange']],
+          leftTitle: 'Penempatan menurut skema', leftText: 'Distribusi Nakes yang aktif di luar negeri', left: [['Government to Government', '521', '46%'], ['Mitra swasta terverifikasi', '446', '40%'], ['Fellowship dan magang', '161', '14%']],
+          tableTitle: 'Keberangkatan Terjadwal', headers: ['Nama', 'Negara', 'Fasilitas Tujuan', 'Tanggal', 'Status'], rows: [['Ari Nugroho', 'Jepang', 'Sakura General Hospital', '02 Sep 2026', 'Siap berangkat', 'ready'], ['Fina Karina', 'Jerman', 'Klinik Hamburg Nord', '04 Sep 2026', 'Dokumen akhir', 'review'], ['Rudi Hartanto', 'Singapura', 'SG Care Centre', '08 Sep 2026', 'Terkonfirmasi', 'depart']],
+          sideTitle: 'Dokumen kontrak', side: [['Berakhir 30 hari', '24 kontrak'], ['Perpanjangan diajukan', '16 kontrak'], ['Menunggu mitra', '8 kontrak']]
+        },
+        'Monitoring': {
+          description: 'Pemantauan kondisi, pelindungan, dan tindak lanjut kasus Nakes di luar negeri.',
+          action: 'Buat kasus', actionIcon: 'support_agent', kicker: 'MONITORING DAN PELINDUNGAN',
+          message: 'Prioritaskan penanganan kasus aktif dan pastikan setiap eskalasi memiliki penanggung jawab.',
+          stats: [['Kasus aktif', '8', 'crisis_alert', 'orange'], ['Check-in bulan ini', '1.006', 'mark_email_read', 'teal'], ['Kasus selesai', '42', 'task_alt', 'lime']],
+          leftTitle: 'Status tindak lanjut kasus', leftText: 'Kasus monitoring yang tercatat pada periode berjalan', left: [['Eskalasi ke perwakilan', '3', '38%'], ['Dalam penanganan mitra', '4', '50%'], ['Menunggu konfirmasi Nakes', '1', '12%']],
+          tableTitle: 'Kasus Prioritas', headers: ['Pelapor', 'Negara', 'Kategori', 'PIC', 'Status'], rows: [['Fajar Kusuma', 'Singapura', 'Kontrak kerja', 'Kemlu Singapura', 'Ditindaklanjuti', 'review'], ['Siti Nurlaila', 'Jepang', 'Kesehatan', 'Mitra Jepang', 'Monitoring', 'depart'], ['Dian Pratiwi', 'Arab Saudi', 'Dokumen tinggal', 'KP2MI', 'Eskalasi', 'risk']],
+          sideTitle: 'SLA penanganan', side: [['Perlu respons hari ini', '3 kasus'], ['Batas respons 24 jam', '2 kasus'], ['Selesai bulan ini', '12 kasus']]
+        },
+        'Re-entry dan SKP': {
+          description: 'Pendataan kepulangan, portofolio pengalaman global, dan rekognisi SKP.',
+          action: 'Usulkan SKP', actionIcon: 'assignment_add', kicker: 'REINTEGRASI DAN REKOGNISI',
+          message: 'Bantu Nakes kembali berkarya di Indonesia dengan pengakuan pengalaman kerja luar negeri.',
+          stats: [['Pengajuan re-entry', '96', 'keyboard_return', 'teal'], ['Menunggu penilaian', '42', 'rate_review', 'orange'], ['SKP ditetapkan', '54', 'workspace_premium', 'lime']],
+          leftTitle: 'Tahapan rekognisi SKP', leftText: 'Pemrosesan portofolio dan penilaian kompetensi', left: [['Portofolio diterima', '96', '100%'], ['Penilaian kolegium', '42', '44%'], ['SKP diterbitkan', '54', '56%']],
+          tableTitle: 'Usulan Rekognisi Terbaru', headers: ['Nama', 'Pengalaman LN', 'Bukti', 'SKP Usulan', 'Status'], rows: [['Siti Amalia', 'Bidan, Arab Saudi', 'Lengkap', '12 SKP', 'Penilaian', 'review'], ['Wawan Prakoso', 'Perawat, Jepang', 'Lengkap', '16 SKP', 'Ditetapkan', 'ready'], ['Desi Cahya', 'Dokter, Jerman', 'Kurang 1 dokumen', '10 SKP', 'Revisi', 'risk']],
+          sideTitle: 'Kegiatan kontribusi', side: [['Alih IPTEK tercatat', '37 kegiatan'], ['Baksos terverifikasi', '19 kegiatan'], ['Pelatihan daring', '58 sertifikat']]
+        },
+        'Program dan Pelatihan': {
+          description: 'Program peningkatan kompetensi, pelatihan bahasa, dan pembekalan negara tujuan.',
+          action: 'Tambah program', actionIcon: 'add_circle', kicker: 'PENGEMBANGAN KOMPETENSI',
+          message: 'Kelola program bersama LPK dan mitra untuk meningkatkan kesiapan peserta.',
+          stats: [['Program aktif', '26', 'school', 'teal'], ['Peserta belajar', '491', 'menu_book', 'lime'], ['Sertifikat terbit', '318', 'verified', 'orange']],
+          leftTitle: 'Partisipasi program', leftText: 'Kehadiran dan penyelesaian pelatihan periode Agustus', left: [['Bahasa negara tujuan', '218', '44%'], ['Orientasi budaya dan etik', '157', '32%'], ['Try-out kompetensi', '116', '24%']],
+          tableTitle: 'Program Berjalan', headers: ['Program', 'Mitra', 'Peserta', 'Mulai', 'Status'], rows: [['Bahasa Jepang N4', 'LPK Sakura', '86 peserta', '18 Agu', 'Berjalan', 'depart'], ['Pembekalan Jerman', 'LPK Mitra Eropa', '64 peserta', '20 Agu', 'Berjalan', 'depart'], ['Try-out Prometric', 'Kolegium Keperawatan', '48 peserta', '29 Agu', 'Pendaftaran', 'review']],
+          sideTitle: 'Kapasitas minggu ini', side: [['Kelas tersedia', '14 kelas'], ['Kursi tersisa', '109 peserta'], ['Perlu fasilitator', '2 program']]
+        },
+        'Mitra Penempatan': {
+          description: 'Verifikasi dan pemantauan LPK, P3MI, institusi pendidikan, serta fasilitas tujuan.',
+          action: 'Tambah mitra', actionIcon: 'handshake', kicker: 'EKOSISTEM MITRA',
+          message: 'Pastikan mitra penempatan memenuhi standar layanan dan kewajiban pelaporan.',
+          stats: [['Mitra aktif', '42', 'handshake', 'teal'], ['Terverifikasi', '36', 'verified_user', 'lime'], ['Masa berlaku dekat', '6', 'event_busy', 'orange']],
+          leftTitle: 'Kategori mitra aktif', leftText: 'Mitra yang berpartisipasi pada mobilitas SDMK', left: [['LPK dan pelatihan bahasa', '19', '45%'], ['P3MI dan penempatan', '14', '33%'], ['Fasilitas kesehatan luar negeri', '9', '22%']],
+          tableTitle: 'Mitra Perlu Tinjauan', headers: ['Nama Mitra', 'Jenis', 'Negara', 'Masa Berlaku', 'Status'], rows: [['LPK Sakura Nusantara', 'LPK', 'Jepang', '15 Sep 2026', 'Terverifikasi', 'ready'], ['Global Medika', 'P3MI', 'Jerman', '04 Sep 2026', 'Perpanjangan', 'review'], ['Care Connect', 'Fasyankes', 'Singapura', '22 Agu 2026', 'Tindak lanjut', 'risk']],
+          sideTitle: 'Kepatuhan mitra', side: [['Laporan bulan ini', '38 dari 42'], ['Audit terjadwal', '4 mitra'], ['Dokumen harus diperbarui', '6 mitra']]
+        },
+        'Integrasi': {
+          description: 'Konektivitas data dengan sistem pemerintah dan mitra ekosistem mobilitas SDMK.',
+          action: 'Tambah konektor', actionIcon: 'add_link', kicker: 'HUB INTEGRASI DATA',
+          message: 'Pantau sinkronisasi, kualitas data, dan kejadian yang membutuhkan rekonsiliasi.',
+          stats: [['Sistem terhubung', '5', 'hub', 'teal'], ['Transaksi hari ini', '3.842', 'sync', 'lime'], ['Perlu rekonsiliasi', '17', 'sync_problem', 'orange']],
+          leftTitle: 'Kesehatan integrasi', leftText: 'Status pertukaran data 24 jam terakhir', left: [['Sinkronisasi berhasil', '98,7%', '99%'], ['Data tertunda', '17', '1%'], ['Kegagalan API', '0', '0%']],
+          tableTitle: 'Log Integrasi Terakhir', headers: ['Sistem', 'Data', 'Waktu', 'Hasil', 'Status'], rows: [['SATUSEHAT SDMK', 'Profil dan STR', '08.24 WIB', '1.204 data', 'Berhasil', 'ready'], ['SiskoP2MI', 'Keberangkatan', '08.30 WIB', '24 data', 'Berhasil', 'ready'], ['Peduli WNI', 'Monitoring', '08.15 WIB', '3 data', 'Menunggu ulang', 'review']],
+          sideTitle: 'Antrean rekonsiliasi', side: [['Duplikasi profil', '8 data'], ['Dokumen belum sesuai', '6 data'], ['Status kontrak berbeda', '3 data']]
+        },
+        'Laporan Strategis': {
+          description: 'Laporan pengambilan keputusan untuk mobilitas, kompetensi, dan diaspora SDMK.',
+          action: 'Buat laporan', actionIcon: 'note_add', kicker: 'ANALITIK DAN PELAPORAN',
+          message: 'Konsolidasikan data operasional menjadi laporan yang siap dibaca pimpinan.',
+          stats: [['Laporan tersedia', '18', 'description', 'teal'], ['Dataset terbarui', '12', 'database', 'lime'], ['Jadwal otomatis', '7', 'schedule', 'orange']],
+          leftTitle: 'Laporan paling sering diakses', leftText: 'Akses laporan oleh pemangku kepentingan bulan ini', left: [['Peta penempatan per negara', '342 akses', '100%'], ['Kesiapan pra-keberangkatan', '286 akses', '84%'], ['Re-entry dan rekognisi SKP', '154 akses', '45%']],
+          tableTitle: 'Laporan Tersedia', headers: ['Nama Laporan', 'Periode', 'Pemilik', 'Pembaruan', 'Aksi'], rows: [['Mobilitas SDMK Global', 'Agustus 2026', 'Direktorat SDMK', 'Hari ini', 'Unduh', 'ready'], ['Kesiapan Penempatan', 'Q3 2026', 'Tim Penempatan', 'Kemarin', 'Unduh', 'ready'], ['Kasus Pelindungan', 'Agustus 2026', 'Pusat Krisis', 'Hari ini', 'Terbatas', 'review']],
+          sideTitle: 'Jadwal laporan', side: [['Ringkasan mingguan', 'Senin, 08.00'], ['Laporan pimpinan', 'Tanggal 1 setiap bulan'], ['Kualitas data', 'Jumat, 16.00']]
+        }
+      };
+
+      function showToast(message) {
+        toastText.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+
+      function setFormStep(step) {
+        formStep = step;
+        document.querySelectorAll('[data-step-panel]').forEach((panel) => panel.classList.toggle('active', Number(panel.dataset.stepPanel) === step));
+        document.querySelectorAll('[data-step-indicator]').forEach((indicator) => {
+          const indicatorStep = Number(indicator.dataset.stepIndicator);
+          indicator.classList.toggle('active', indicatorStep === step);
+          indicator.classList.toggle('done', indicatorStep < step);
+        });
+        prevStep.hidden = step === 1;
+        nextStep.textContent = step === 3 ? 'Simpan Profil' : 'Lanjutkan';
+        formHint.textContent = step === 1 ? 'Langkah 1 dari 3: lengkapi profil dan profesi.' : step === 2 ? 'Langkah 2 dari 3: masukkan data dokumen dan kompetensi.' : 'Langkah 3 dari 3: konfirmasi preferensi penempatan.';
+      }
+
+      function openNakesModal() {
+        nakesModal.classList.add('show');
+        setFormStep(1);
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeNakesModal() {
+        nakesModal.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      function openOperationalModal(page) {
+        const config = actionForms[page];
+        if (!config) {
+          showToast('Form untuk aksi ini belum termasuk scope tahap pertama.');
+          return;
+        }
+        operationalModalKicker.textContent = config.kicker;
+        operationalModalTitle.textContent = config.title;
+        operationalModalDescription.textContent = config.description;
+        operationalFormBody.innerHTML = `<div class="form-intro"><span class="material-symbols-outlined">info</span><span>Form ini merupakan simulasi kebutuhan data. Penyimpanan ke server dan integrasi antar-sistem belum diaktifkan.</span></div><div class="form-grid">${config.fields}</div>`;
+        operationalFormHint.textContent = 'Field bertanda * wajib diisi.';
+        saveOperationalForm.textContent = config.submit;
+        operationalForm.dataset.page = page;
+        operationalModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => operationalForm.querySelector('input, select, textarea')?.focus(), 0);
+      }
+
+      function closeOperationalModal() {
+        operationalModal.classList.remove('show');
+        operationalForm.reset();
+        operationalFormBody.innerHTML = '';
+        document.body.style.overflow = '';
+      }
+
+      function renderOperationalPage(page) {
+        const data = pages[page];
+        const stats = data.stats.map(([label, value, icon, color]) => `<div class="stat"><div class="stat-head"><span>${label}</span><span class="stat-icon ${color} material-symbols-outlined">${icon}</span></div><div class="stat-value">${value}</div><div class="stat-note">Data periode Agustus 2026</div></div>`).join('');
+        const progress = data.left.map(([label, value, width]) => `<div class="country-row"><div class="system-mark"><span class="material-symbols-outlined">check_circle</span></div><div><div class="country-name">${label}</div><div class="country-bar"><span style="width:${width}"></span></div></div><div class="country-total">${value}</div></div>`).join('');
+        const rows = data.rows.map((row) => `<tr>${row.slice(0, 4).map((cell, index) => `<td>${index === 0 ? `<div class="person"><span class="person-avatar">${cell.split(' ').map((part) => part[0]).join('').slice(0, 2)}</span>${cell}</div>` : cell}</td>`).join('')}<td><span class="chip ${row[5]}">${row[4]}</span></td></tr>`).join('');
+        const side = data.side.map(([title, detail]) => `<div class="alert-row"><div class="alert-mark info"><span class="material-symbols-outlined">task_alt</span></div><div class="alert-copy"><strong>${title}</strong><span>${detail}</span></div></div>`).join('');
+
+        pageTitle.textContent = page;
+        breadcrumbPage.textContent = page;
+        pageDescription.textContent = data.description;
+        registerButton.innerHTML = `<span class="material-symbols-outlined">${data.actionIcon}</span>${data.action}`;
+        dynamicContent.innerHTML = `
+          <section class="summary-strip" aria-label="Ringkasan ${page}">
+            <div class="summary-intro"><span>${data.kicker}</span><strong>${data.message}</strong><small>Data tersinkronisasi per 26 Agustus 2026, 08.30 WIB</small></div>
+            ${stats}
+          </section>
+          <section class="main-grid">
+            <article class="panel"><div class="panel-header"><div><h3>${data.leftTitle}</h3><p>${data.leftText}</p></div><button class="text-link" data-toast="Membuka rincian ${page}">Lihat detail</button></div><div class="country-list">${progress}</div></article>
+            <article class="panel"><div class="panel-header"><div><h3>${data.sideTitle}</h3><p>Prioritas pengelolaan saat ini</p></div></div><div class="alerts">${side}</div></article>
+          </section>
+          <section class="lower-grid">
+            <article class="panel"><div class="panel-header"><div><h3>${data.tableTitle}</h3><p>Data operasional yang terakhir diperbarui</p></div><button class="text-link" data-toast="Membuka daftar lengkap ${page}">Lihat semua</button></div><div class="table-wrap"><table><thead><tr>${data.headers.map((header) => `<th>${header}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div><div class="panel-footer"><span>Menampilkan 1-3 dari data aktif</span><div class="pagination"><button class="page-dot active">1</button><button class="page-dot">2</button><button class="page-dot">&gt;</button></div></div></article>
+            <article class="panel"><div class="panel-header"><div><h3>Aksi Cepat</h3><p>Operasi yang dapat dilakukan dari modul ini</p></div></div><div class="integration-status"><div class="system-line actionable-line" role="button" tabindex="0" data-primary-action><div class="system-mark"><span class="material-symbols-outlined">add_circle</span></div><div class="system-copy"><strong>${data.action}</strong><span>Buat data atau pengajuan baru</span></div></div><div class="system-line"><div class="system-mark"><span class="material-symbols-outlined">filter_alt</span></div><div class="system-copy"><strong>Filter data</strong><span>Saring menurut negara, profesi, atau status</span></div></div><div class="system-line"><div class="system-mark"><span class="material-symbols-outlined">download</span></div><div class="system-copy"><strong>Ekspor daftar</strong><span>Siapkan data untuk pelaporan</span></div></div></div></article>
+          </section>`;
+      }
+
+      function renderPage(page) {
+        currentPage = page;
+        registerButton.hidden = page === 'Portal CMS';
+        document.getElementById('downloadButton').hidden = page === 'Portal CMS';
+        if (page === 'Portal CMS') {
+          pageTitle.textContent = 'Portal CMS';
+          breadcrumbPage.textContent = 'Portal CMS';
+          pageDescription.textContent = 'Kelola gambar dan caption slider halaman utama.';
+          window.HeroCMS.mount(dynamicContent);
+          return;
+        }
+        if (page === 'Dashboard') {
+          pageTitle.textContent = 'Dashboard Mobilitas Global';
+          breadcrumbPage.textContent = 'Dashboard';
+          pageDescription.textContent = 'Ringkasan kesiapan, penempatan, dan perlindungan tenaga kesehatan Indonesia.';
+          registerButton.innerHTML = '<span class="material-symbols-outlined">person_add</span>Registrasi Nakes';
+          dynamicContent.innerHTML = dashboardMarkup;
+          return;
+        }
+        renderOperationalPage(page);
+      }
+
+      collapseButton.addEventListener('click', () => {
+        const isCollapsed = sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('is-collapsed', isCollapsed);
+        collapseButton.querySelector('span').textContent = isCollapsed ? 'left_panel_open' : 'left_panel_close';
+        collapseButton.title = isCollapsed ? 'Bentangkan sidebar' : 'Ciutkan sidebar';
+      });
+
+      document.querySelectorAll('.nav-item').forEach((item) => {
+        item.addEventListener('click', () => {
+          document.querySelector('.nav-item.active').classList.remove('active');
+          item.classList.add('active');
+          renderPage(item.dataset.page);
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        const action = event.target.closest('[data-toast]');
+        if (action) showToast(action.dataset.toast);
+      });
+      document.getElementById('downloadButton').addEventListener('click', () => showToast('Laporan ' + currentPage + ' sedang disiapkan.'));
+      registerButton.addEventListener('click', () => {
+        if (currentPage === 'Dashboard' || currentPage === 'Nakes Global') openNakesModal();
+        else openOperationalModal(currentPage);
+      });
+      document.addEventListener('click', (event) => {
+        if (event.target.closest('[data-primary-action]')) registerButton.click();
+      });
+      document.addEventListener('keydown', (event) => {
+        if ((event.key === 'Enter' || event.key === ' ') && event.target.closest('[data-primary-action]')) {
+          event.preventDefault();
+          registerButton.click();
+        }
+      });
+      document.getElementById('notificationButton').addEventListener('click', () => showToast('Anda memiliki 3 notifikasi prioritas.'));
+      document.getElementById('globalSearch').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') showToast('Pencarian untuk "' + event.target.value + '" dijalankan.');
+      });
+      document.getElementById('closeNakesModal').addEventListener('click', closeNakesModal);
+      nakesModal.addEventListener('click', (event) => { if (event.target === nakesModal) closeNakesModal(); });
+      document.getElementById('closeOperationalModal').addEventListener('click', closeOperationalModal);
+      document.getElementById('cancelOperationalForm').addEventListener('click', closeOperationalModal);
+      operationalModal.addEventListener('click', (event) => { if (event.target === operationalModal) closeOperationalModal(); });
+      operationalForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!operationalForm.reportValidity()) return;
+        const config = actionForms[operationalForm.dataset.page];
+        closeOperationalModal();
+        showToast(config.success);
+      });
+      prevStep.addEventListener('click', () => setFormStep(Math.max(1, formStep - 1)));
+      nextStep.addEventListener('click', () => {
+        if (formStep < 3) {
+          const requiredFields = document.querySelectorAll(`[data-step-panel="${formStep}"] [required]`);
+          for (const field of requiredFields) {
+            if (!field.checkValidity()) {
+              field.reportValidity();
+              return;
+            }
+          }
+          setFormStep(formStep + 1);
+          return;
+        }
+        if (!nakesForm.reportValidity()) return;
+        closeNakesModal();
+        nakesForm.reset();
+        showToast('Profil Nakes berhasil disimpan dan menunggu verifikasi dokumen.');
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        if (nakesModal.classList.contains('show')) closeNakesModal();
+        if (operationalModal.classList.contains('show')) closeOperationalModal();
+      });
+    </script>
+  </body>
+</html>

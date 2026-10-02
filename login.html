@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Login Nakes ke Workspace SDMK GLOBAL." />
+    <title>Masuk Workspace Nakes — SDMK GLOBAL</title>
+    <style>
+      :root { --teal:#14b8ad; --teal-dark:#087f78; --teal-deep:#075d5a; --lime:#ccdb39; --ink:#25383c; --muted:#66767a; --line:#dce7e7; --soft:#e9f8f6; --canvas:#f5faf9; --danger:#b84c45; }
+      * { box-sizing: border-box; }
+      body { margin:0; min-height:100vh; color:var(--ink); background:var(--canvas); font-family:"Segoe UI",Arial,sans-serif; }
+      button,input { font:inherit; }
+      a { color:inherit; text-decoration:none; }
+      .shell { display:grid; min-height:100vh; grid-template-columns:minmax(420px,.9fr) minmax(520px,1.1fr); }
+      .story { position:relative; display:flex; min-height:100vh; flex-direction:column; justify-content:space-between; overflow:hidden; padding:42px 50px; color:#fff; background:linear-gradient(145deg,var(--teal-deep),#0a716b); }
+      .story::before { position:absolute; top:-180px; right:-200px; width:520px; height:520px; border:75px solid rgba(204,219,57,.19); border-radius:50%; content:""; }
+      .story::after { position:absolute; bottom:-220px; left:-180px; width:520px; height:520px; border:70px solid rgba(255,255,255,.07); border-radius:50%; content:""; }
+      .brand { position:relative; z-index:1; display:flex; align-items:center; gap:12px; }
+      .brand img { width:46px; height:50px; object-fit:contain; }
+      .brand strong { display:block; font-size:18px; }
+      .brand span { display:block; margin-top:3px; color:#bfe7e3; font-size:10px; }
+      .story-main { position:relative; z-index:1; max-width:560px; }
+      .eyebrow { display:inline-flex; align-items:center; gap:8px; margin-bottom:17px; color:#e3ef9c; font-size:11px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; }
+      .eyebrow::before { width:24px; height:3px; border-radius:99px; background:var(--lime); content:""; }
+      .story h1 { margin:0; font-size:clamp(39px,4.6vw,64px); line-height:1.03; letter-spacing:-2px; }
+      .story-main > p { max-width:520px; margin:23px 0 30px; color:#c9e7e4; font-size:15px; line-height:1.65; }
+      .journey { display:grid; gap:11px; }
+      .journey-item { display:grid; grid-template-columns:37px 1fr; gap:13px; align-items:center; padding:13px 15px; border:1px solid rgba(255,255,255,.14); border-radius:13px; background:rgba(255,255,255,.07); }
+      .journey-item b { display:grid; width:34px; height:34px; place-items:center; border-radius:10px; color:#3b4700; background:var(--lime); font-size:10px; }
+      .journey-item strong { display:block; font-size:12px; }
+      .journey-item span { display:block; margin-top:3px; color:#b9dad7; font-size:9px; }
+      .story-foot { position:relative; z-index:1; display:flex; justify-content:space-between; gap:20px; color:#9dcac6; font-size:9px; }
+
+      .auth-area { display:flex; align-items:center; justify-content:center; padding:42px; background:#fff; }
+      .auth-wrap { width:min(480px,100%); }
+      .back { display:inline-flex; align-items:center; gap:8px; margin-bottom:27px; color:#607276; font-size:11px; font-weight:700; }
+      .back:hover { color:var(--teal-dark); }
+      .context-card { display:none; align-items:flex-start; gap:12px; margin-bottom:20px; padding:14px; border:1px solid #cbe8e5; border-radius:13px; color:#3f6264; background:#effaf8; }
+      .context-card.show { display:flex; }
+      .context-icon { display:grid; width:34px; height:34px; flex:0 0 34px; place-items:center; border-radius:10px; color:#fff; background:var(--teal); font-size:12px; font-weight:800; }
+      .context-card strong { display:block; font-size:11px; }
+      .context-card span { display:block; margin-top:4px; color:#688083; font-size:9px; line-height:1.4; }
+      .auth-wrap h2 { margin:0; font-size:30px; letter-spacing:-.7px; }
+      .auth-subtitle { margin:8px 0 24px; color:var(--muted); font-size:12px; line-height:1.5; }
+      .tabs { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:23px; padding:4px; border-radius:11px; background:#edf3f3; }
+      .tab { height:39px; border:0; border-radius:8px; color:#627276; background:transparent; font-size:11px; font-weight:750; cursor:pointer; }
+      .tab.active { color:var(--teal-deep); background:#fff; box-shadow:0 2px 8px rgba(45,76,77,.09); }
+      .form-panel { display:none; }
+      .form-panel.active { display:block; }
+      .field { margin-bottom:14px; }
+      .field label { display:block; margin-bottom:6px; color:#4d6064; font-size:10px; font-weight:700; }
+      .field label span { color:var(--danger); }
+      .field input { width:100%; height:44px; padding:0 12px; border:1px solid var(--line); border-radius:9px; outline:none; color:var(--ink); background:#fbfdfd; font-size:12px; }
+      .field input:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(20,184,173,.12); }
+      .password-wrap { position:relative; }
+      .password-wrap input { padding-right:70px; }
+      .show-password { position:absolute; top:5px; right:5px; height:34px; padding:0 9px; border:0; border-radius:7px; color:var(--teal-dark); background:#edf8f7; font-size:9px; font-weight:750; cursor:pointer; }
+      .form-row { display:flex; align-items:center; justify-content:space-between; gap:15px; margin:-2px 0 18px; }
+      .remember { display:flex; align-items:center; gap:7px; color:#67777a; font-size:9px; }
+      .remember input { accent-color:var(--teal-dark); }
+      .text-link { border:0; color:var(--teal-dark); background:none; font-size:9px; font-weight:750; cursor:pointer; }
+      .btn { display:inline-flex; width:100%; min-height:45px; align-items:center; justify-content:center; border:1px solid transparent; border-radius:10px; color:#fff; background:var(--teal-dark); box-shadow:0 9px 22px rgba(8,127,120,.2); font-size:12px; font-weight:750; cursor:pointer; }
+      .btn:hover { background:var(--teal-deep); }
+      .security-note { display:flex; align-items:flex-start; gap:9px; margin-top:20px; padding-top:17px; border-top:1px solid var(--line); color:#7b898c; font-size:9px; line-height:1.45; }
+      .security-note b { display:grid; width:22px; height:22px; flex:0 0 22px; place-items:center; border-radius:50%; color:var(--teal-dark); background:var(--soft); font-size:9px; }
+      .prototype-note { margin-top:17px; padding:11px 12px; border-radius:9px; color:#7c6b20; background:#faf8e8; font-size:9px; line-height:1.45; }
+      .toast { position:fixed; right:20px; bottom:20px; z-index:30; max-width:340px; padding:13px 15px; border:1px solid #b9e4df; border-radius:11px; color:#1c625d; background:#effaf9; box-shadow:0 16px 40px rgba(31,72,73,.16); font-size:10px; opacity:0; pointer-events:none; transform:translateY(10px); transition:180ms ease; }
+      .toast.show { opacity:1; transform:translateY(0); }
+      @media(max-width:900px){.shell{grid-template-columns:1fr}.story{min-height:auto;padding:30px 28px}.story-main{margin:70px 0 55px}.journey{grid-template-columns:repeat(3,1fr)}.journey-item{grid-template-columns:1fr}.auth-area{padding:50px 24px}}
+      @media(max-width:620px){.story{padding:24px 20px}.story-main{margin:55px 0 36px}.story h1{font-size:42px}.journey{grid-template-columns:1fr}.story-foot{flex-direction:column}.auth-area{padding:34px 18px}.auth-wrap h2{font-size:26px}}
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="story">
+        <a class="brand" href="landing-page.html"><img src="assets/logo-kemenkes.png" alt="Logo Kementerian Kesehatan" /><div><strong>SDMK GLOBAL</strong><span>Kementerian Kesehatan Republik Indonesia</span></div></a>
+        <div class="story-main"><span class="eyebrow">Workspace khusus Nakes</span><h1>Satu profil untuk perjalanan karier globalmu.</h1><p>Kelola minat, dokumen, program penyiapan, pengajuan, hingga rekognisi pengalaman dalam satu workspace pribadi.</p><div class="journey"><div class="journey-item"><b>01</b><div><strong>Temukan peluang</strong><span>Rekomendasi berdasarkan profesi dan minat.</span></div></div><div class="journey-item"><b>02</b><div><strong>Siapkan kompetensi</strong><span>Pelatihan, dokumen, dan checklist kesiapan.</span></div></div><div class="journey-item"><b>03</b><div><strong>Pantau perjalanan</strong><span>Status pengajuan hingga re-entry dan SKP.</span></div></div></div></div>
+        <div class="story-foot"><span>Portal ini hanya untuk tenaga medis dan tenaga kesehatan.</span><span>Prototype SDMK GLOBAL 2026</span></div>
+      </section>
+
+      <section class="auth-area">
+        <div class="auth-wrap">
+          <a class="back" href="landing-page.html">← Kembali ke portal informasi</a>
+          <div class="context-card" id="interestContext"><span class="context-icon">✓</span><div><strong>Minatmu sudah tersimpan sementara</strong><span id="interestSummary">Masuk atau buat akun untuk melanjutkan ke rekomendasi program.</span></div></div>
+          <h2 id="authTitle">Masuk ke Workspace</h2><p class="auth-subtitle" id="authSubtitle">Gunakan akun Nakes untuk melanjutkan perjalanan mobilitas global.</p>
+          <div class="tabs"><button class="tab active" type="button" data-tab="login">Masuk</button><button class="tab" type="button" data-tab="register">Buat Akun</button></div>
+
+          <form class="form-panel active" id="loginForm" data-panel="login">
+            <div class="field"><label>NIK atau email <span>*</span></label><input required name="identifier" autocomplete="username" placeholder="Masukkan NIK atau email" /></div>
+            <div class="field"><label>Kata sandi <span>*</span></label><div class="password-wrap"><input required name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Minimal 6 karakter" /><button class="show-password" type="button">Tampilkan</button></div></div>
+            <div class="form-row"><label class="remember"><input type="checkbox" name="remember" /> Ingat saya di perangkat ini</label><button class="text-link" type="button" data-toast="Tautan pemulihan akun akan dikirim melalui kanal terverifikasi.">Lupa kata sandi?</button></div>
+            <button class="btn" type="submit">Masuk ke Workspace</button>
+          </form>
+
+          <form class="form-panel" id="registerForm" data-panel="register">
+            <div class="field"><label>Nama lengkap <span>*</span></label><input required name="name" autocomplete="name" placeholder="Nama sesuai identitas" /></div>
+            <div class="field"><label>NIK <span>*</span></label><input required name="nik" inputmode="numeric" minlength="16" maxlength="16" pattern="[0-9]{16}" placeholder="16 digit NIK" /></div>
+            <div class="field"><label>Email aktif <span>*</span></label><input required name="email" type="email" autocomplete="email" placeholder="nama@email.com" /></div>
+            <div class="field"><label>Nomor ponsel <span>*</span></label><input required name="phone" type="tel" autocomplete="tel" placeholder="Contoh: 081234567890" /></div>
+            <div class="field"><label>Buat kata sandi <span>*</span></label><div class="password-wrap"><input required name="password" type="password" autocomplete="new-password" minlength="8" placeholder="Minimal 8 karakter" /><button class="show-password" type="button">Tampilkan</button></div></div>
+            <label class="remember" style="margin:0 0 18px"><input required type="checkbox" /> Saya menyetujui pemrosesan data untuk layanan mobilitas global SDMK.</label>
+            <button class="btn" type="submit">Buat Akun dan Lanjutkan</button>
+          </form>
+          <div class="security-note"><b>i</b><span>Akses administrator tidak tersedia dari halaman ini. Portal internal menggunakan alamat dan kebijakan akses terpisah.</span></div>
+          <div class="prototype-note">Simulasi prototype: autentikasi belum terhubung dengan layanan identitas atau SATUSEHAT. Gunakan data contoh untuk mencoba alur.</div>
+        </div>
+      </section>
+    </main>
+    <div class="toast" id="toast" role="status">Informasi prototype.</div>
+    <script>
+      const tabs = [...document.querySelectorAll('[data-tab]')];
+      const panels = [...document.querySelectorAll('[data-panel]')];
+      const interestContext = document.getElementById('interestContext');
+      const interestSummary = document.getElementById('interestSummary');
+      const toast = document.getElementById('toast');
+      const params = new URLSearchParams(window.location.search);
+      const safeNext = params.get('next') === 'workspace-nakes.html' ? 'workspace-nakes.html' : 'workspace-nakes.html';
+      let toastTimer;
+
+      function showToast(message) { toast.textContent=message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),2600); }
+      function selectTab(tab) { tabs.forEach((item)=>item.classList.toggle('active',item.dataset.tab===tab)); panels.forEach((panel)=>panel.classList.toggle('active',panel.dataset.panel===tab)); document.getElementById('authTitle').textContent=tab==='login'?'Masuk ke Workspace':'Buat Akun Nakes'; document.getElementById('authSubtitle').textContent=tab==='login'?'Gunakan akun Nakes untuk melanjutkan perjalanan mobilitas global.':'Daftarkan akun untuk menyimpan profil, minat, dan progres penyiapan.'; }
+      function completeAuth(user) { sessionStorage.setItem('sigmaUser',JSON.stringify(user)); window.location.href=safeNext; }
+
+      const draft = JSON.parse(sessionStorage.getItem('sigmaInterestDraft') || 'null');
+      if (draft) { interestContext.classList.add('show'); interestSummary.textContent=draft.program ? `${draft.program} akan diteruskan setelah kamu masuk.` : `Minat ${draft.path || 'mobilitas global'} akan diteruskan setelah kamu masuk.`; }
+      if (params.get('mode') === 'register') selectTab('register');
+      tabs.forEach((tab)=>tab.addEventListener('click',()=>selectTab(tab.dataset.tab)));
+      document.querySelectorAll('.show-password').forEach((button)=>button.addEventListener('click',()=>{ const input=button.previousElementSibling; const show=input.type==='password'; input.type=show?'text':'password'; button.textContent=show?'Sembunyikan':'Tampilkan'; }));
+      document.querySelectorAll('[data-toast]').forEach((button)=>button.addEventListener('click',()=>showToast(button.dataset.toast)));
+      document.getElementById('loginForm').addEventListener('submit',(event)=>{ event.preventDefault(); if(!event.currentTarget.reportValidity())return; const identifier=new FormData(event.currentTarget).get('identifier'); completeAuth({name: identifier.includes('@')?'Maya Utami':`Nakes ${identifier.slice(-4)}`,identifier,prototype:true}); });
+      document.getElementById('registerForm').addEventListener('submit',(event)=>{ event.preventDefault(); if(!event.currentTarget.reportValidity())return; const data=Object.fromEntries(new FormData(event.currentTarget).entries()); completeAuth({name:data.name,identifier:data.email,prototype:true,newAccount:true}); });
+    </script>
+  </body>
+</html>

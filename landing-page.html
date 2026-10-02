@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Prototype Portal SDMK GLOBAL untuk informasi peluang, program penyiapan, dan mobilitas global tenaga kesehatan Indonesia." />
+    <title>SDMK GLOBAL — Portal Mobilitas Global</title>
+    <style>
+      :root {
+        --turquoise: #14b8ad;
+        --turquoise-dark: #087f78;
+        --turquoise-deep: #075d5a;
+        --turquoise-soft: #e7f8f6;
+        --lime: #ccdb39;
+        --lime-soft: #f6f9d7;
+        --ink: #25383c;
+        --muted: #627277;
+        --line: #dce8e8;
+        --surface: #ffffff;
+        --canvas: #f6faf9;
+        --warning: #b6651d;
+        --radius: 20px;
+        --shadow: 0 18px 45px rgba(31, 75, 76, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; color: var(--ink); background: var(--canvas); font-family: "Segoe UI", Arial, sans-serif; }
+      button, input, select { font: inherit; }
+      button, a { -webkit-tap-highlight-color: transparent; }
+      a { color: inherit; text-decoration: none; }
+      img { display: block; max-width: 100%; }
+      .container { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+
+      .top-note { padding: 8px 20px; color: #eafffd; background: var(--turquoise-deep); font-size: 12px; text-align: center; }
+      .site-header { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid rgba(220, 232, 232, .9); background: rgba(255,255,255,.94); backdrop-filter: blur(14px); }
+      .nav-bar { display: flex; min-height: 76px; align-items: center; gap: 28px; }
+      .brand { display: flex; min-width: 260px; align-items: center; gap: 11px; }
+      .brand img { width: 40px; height: 43px; object-fit: contain; }
+      .brand strong { display: block; color: var(--turquoise-deep); font-size: 17px; letter-spacing: -.2px; }
+      .brand span { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; font-weight: 600; }
+      .nav-links { display: flex; flex: 1; align-items: center; justify-content: center; gap: 25px; }
+      .nav-links a { color: #4e6064; font-size: 13px; font-weight: 650; }
+      .nav-links a:hover { color: var(--turquoise-dark); }
+      .nav-actions { display: flex; align-items: center; gap: 9px; }
+      .btn { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 17px; border: 1px solid transparent; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: transform 160ms ease, background 160ms ease, border 160ms ease; }
+      .btn:hover { transform: translateY(-1px); }
+      .btn-primary { color: #fff; background: var(--turquoise-dark); box-shadow: 0 8px 22px rgba(8,127,120,.22); }
+      .btn-primary:hover { background: var(--turquoise-deep); }
+      .btn-secondary { border-color: #cfe0df; color: var(--turquoise-deep); background: #fff; }
+      .btn-light { color: var(--turquoise-deep); background: #fff; }
+      .menu-toggle { display: none; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: #fff; font-size: 20px; }
+
+      .hero { position: relative; overflow: hidden; padding: 70px 0 54px; background: linear-gradient(135deg, #e6f8f5 0%, #f8fbec 62%, #fff 100%); }
+      .hero::before, .hero::after { position: absolute; border-radius: 50%; content: ""; }
+      .hero::before { top: -250px; right: -180px; width: 600px; height: 600px; border: 80px solid rgba(204,219,57,.2); }
+      .hero::after { bottom: -240px; left: 43%; width: 430px; height: 430px; border: 70px solid rgba(20,184,173,.08); }
+      .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(380px, .92fr); gap: 64px; align-items: center; }
+      .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; color: var(--turquoise-dark); font-size: 12px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+      .eyebrow::before { width: 26px; height: 3px; border-radius: 99px; background: var(--lime); content: ""; }
+      .hero h1 { max-width: 720px; margin: 0; color: #183b3d; font-size: clamp(42px, 5vw, 68px); line-height: 1.02; letter-spacing: -2.5px; }
+      .hero h1 span { color: var(--turquoise-dark); }
+      .hero-copy { max-width: 680px; margin: 24px 0; color: #50666a; font-size: 17px; line-height: 1.7; }
+      .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; }
+      .trust-note { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 24px; color: #5d7074; font-size: 12px; }
+      .trust-note span { display: inline-flex; align-items: center; gap: 7px; }
+      .trust-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--turquoise); box-shadow: 0 0 0 4px rgba(20,184,173,.13); }
+
+      .hero-visual { position: relative; min-height: 500px; }
+      .hero-photo { position: absolute; inset: 0 0 35px 34px; overflow: hidden; border: 8px solid rgba(255,255,255,.86); border-radius: 36px 36px 110px 36px; box-shadow: var(--shadow); }
+      .hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+      .hero-photo::after { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(4,61,59,.78)); content: ""; }
+      .photo-caption { position: absolute; right: 30px; bottom: 62px; left: 68px; z-index: 2; color: #fff; }
+      .photo-caption strong { display: block; font-size: 19px; }
+      .photo-caption span { display: block; margin-top: 5px; color: #d9f3f0; font-size: 12px; line-height: 1.5; }
+
+      .quick-search { position: relative; z-index: 5; margin-top: -28px; }
+      .search-panel { display: grid; grid-template-columns: 1.3fr .8fr .8fr auto; gap: 10px; padding: 15px; border: 1px solid rgba(214,230,229,.9); border-radius: 18px; background: #fff; box-shadow: var(--shadow); }
+      .search-field { position: relative; }
+      .search-field label { display: block; margin: 0 0 6px 3px; color: #718085; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+      .search-field input, .search-field select { width: 100%; height: 43px; padding: 0 12px; border: 1px solid #dce6e6; border-radius: 9px; outline: none; color: var(--ink); background: #fbfdfd; font-size: 12px; }
+      .search-field input:focus, .search-field select:focus { border-color: var(--turquoise); box-shadow: 0 0 0 3px rgba(20,184,173,.12); }
+      .search-panel .btn { align-self: end; height: 43px; }
+
+      section { scroll-margin-top: 95px; }
+      .section { padding: 88px 0; }
+      .section-white { background: #fff; }
+      .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 34px; }
+      .section-head h2 { max-width: 650px; margin: 0; color: #214447; font-size: clamp(30px, 4vw, 44px); line-height: 1.12; letter-spacing: -1.3px; }
+      .section-head p { max-width: 470px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+      .section-label { display: block; margin-bottom: 10px; color: var(--turquoise-dark); font-size: 11px; font-weight: 800; letter-spacing: .9px; text-transform: uppercase; }
+
+      .path-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .path-card { position: relative; min-height: 255px; overflow: hidden; padding: 25px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; transition: transform 180ms ease, box-shadow 180ms ease; }
+      .path-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+      .path-index { display: grid; width: 46px; height: 46px; place-items: center; margin-bottom: 32px; border-radius: 14px; color: var(--turquoise-deep); background: var(--turquoise-soft); font-size: 13px; font-weight: 800; }
+      .path-card:nth-child(2) .path-index, .path-card:nth-child(4) .path-index { color: #4c5900; background: var(--lime-soft); }
+      .path-card h3 { margin: 0 0 10px; font-size: 18px; }
+      .path-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+      .path-link { position: absolute; bottom: 24px; left: 25px; color: var(--turquoise-dark); font-size: 12px; font-weight: 750; }
+
+      .opportunity-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 22px; }
+      .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+      .filter-chip { min-height: 35px; padding: 0 13px; border: 1px solid #d8e5e4; border-radius: 999px; color: #5a6a6e; background: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
+      .filter-chip.active { border-color: var(--turquoise-dark); color: #fff; background: var(--turquoise-dark); }
+      .result-note { color: var(--muted); font-size: 11px; }
+      .opportunity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+      .opportunity-card { display: flex; min-height: 310px; flex-direction: column; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+      .opportunity-card[hidden] { display: none; }
+      .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+      .country-code { display: grid; width: 45px; height: 35px; place-items: center; border-radius: 9px; color: var(--turquoise-deep); background: var(--turquoise-soft); font-size: 11px; font-weight: 800; }
+      .demo-badge { padding: 5px 8px; border-radius: 999px; color: #716b1c; background: var(--lime-soft); font-size: 9px; font-weight: 800; letter-spacing: .3px; }
+      .opportunity-card h3 { margin: 20px 0 8px; font-size: 17px; line-height: 1.3; }
+      .opportunity-card > p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+      .meta-list { display: grid; gap: 8px; margin: 18px 0 22px; padding: 0; list-style: none; }
+      .meta-list li { display: flex; justify-content: space-between; gap: 10px; padding-top: 8px; border-top: 1px dashed #dce6e6; color: #68777b; font-size: 10px; }
+      .meta-list strong { color: #35494d; font-size: 10px; text-align: right; }
+      .opportunity-card .btn { width: 100%; margin-top: auto; }
+      .empty-state { display: none; padding: 34px; border: 1px dashed #bed6d4; border-radius: var(--radius); color: var(--muted); background: #fff; text-align: center; }
+      .empty-state.show { display: block; }
+
+      .prep-grid { display: grid; grid-template-columns: .82fr 1.18fr; gap: 28px; align-items: stretch; }
+      .prep-image { position: relative; min-height: 510px; overflow: hidden; border-radius: 28px; background: #d8ecea; }
+      .prep-image img { width: 100%; height: 100%; object-fit: cover; }
+      .prep-image::after { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(5,70,67,.86)); content: ""; }
+      .prep-image-copy { position: absolute; right: 28px; bottom: 27px; left: 28px; z-index: 2; color: #fff; }
+      .prep-image-copy strong { display: block; font-size: 22px; line-height: 1.2; }
+      .prep-image-copy span { display: block; margin-top: 8px; color: #daf2ef; font-size: 12px; line-height: 1.55; }
+      .prep-list { display: grid; gap: 12px; }
+      .prep-item { display: grid; grid-template-columns: 54px 1fr auto; gap: 16px; align-items: center; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+      .prep-number { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 14px; color: #fff; background: var(--turquoise); font-size: 12px; font-weight: 800; }
+      .prep-item:nth-child(even) .prep-number { color: #3e4900; background: var(--lime); }
+      .prep-item h3 { margin: 0 0 4px; font-size: 15px; }
+      .prep-item p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+      .prep-owner { max-width: 135px; color: var(--turquoise-dark); font-size: 10px; font-weight: 750; text-align: right; }
+
+      .journey { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .journey::before { position: absolute; top: 35px; right: 16%; left: 16%; height: 2px; background: linear-gradient(90deg, var(--turquoise), var(--lime), var(--turquoise)); content: ""; }
+      .journey-card { position: relative; padding: 70px 26px 27px; border: 1px solid var(--line); border-radius: 20px; background: #fff; }
+      .journey-dot { position: absolute; top: 18px; left: 26px; display: grid; width: 35px; height: 35px; place-items: center; border: 6px solid var(--canvas); border-radius: 50%; color: #fff; background: var(--turquoise-dark); font-size: 10px; font-weight: 800; box-sizing: content-box; }
+      .journey-card:nth-child(2) .journey-dot { color: #424b00; background: var(--lime); }
+      .journey-card h3 { margin: 0 0 10px; font-size: 19px; }
+      .journey-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+      .journey-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+      .journey-tags span { padding: 6px 8px; border-radius: 7px; color: #52666a; background: #eef5f4; font-size: 9px; font-weight: 700; }
+
+      .ecosystem { display: grid; grid-template-columns: .75fr 1.25fr; gap: 42px; align-items: center; }
+      .ecosystem-copy h2 { margin: 0 0 16px; color: #214447; font-size: 38px; line-height: 1.15; letter-spacing: -1px; }
+      .ecosystem-copy p { margin: 0 0 23px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+      .partner-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
+      .partner { min-height: 114px; padding: 18px; border: 1px solid var(--line); border-radius: 15px; background: #fff; }
+      .partner-code { color: var(--turquoise-dark); font-size: 18px; font-weight: 850; }
+      .partner strong { display: block; margin-top: 12px; font-size: 11px; }
+      .partner span { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; line-height: 1.4; }
+
+      .cta { padding: 45px 0 80px; }
+      .cta-panel { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 25px; align-items: center; overflow: hidden; padding: 42px; border-radius: 28px; color: #fff; background: var(--turquoise-deep); }
+      .cta-panel::after { position: absolute; top: -110px; right: 110px; width: 260px; height: 260px; border: 45px solid rgba(204,219,57,.18); border-radius: 50%; content: ""; }
+      .cta-panel h2 { position: relative; z-index: 1; max-width: 700px; margin: 0; font-size: 34px; line-height: 1.15; }
+      .cta-panel p { position: relative; z-index: 1; max-width: 650px; margin: 12px 0 0; color: #ccece9; font-size: 13px; line-height: 1.6; }
+      .cta-actions { position: relative; z-index: 1; display: flex; gap: 9px; }
+
+      footer { padding: 46px 0 30px; color: #d9ecea; background: #18383a; }
+      .footer-grid { display: grid; grid-template-columns: 1.3fr repeat(3, .7fr); gap: 40px; }
+      .footer-brand { display: flex; align-items: center; gap: 12px; }
+      .footer-brand img { width: 44px; height: 48px; object-fit: contain; }
+      .footer-brand strong { display: block; color: #fff; }
+      .footer-brand span { display: block; margin-top: 3px; color: #a9c8c5; font-size: 10px; }
+      .footer-copy { max-width: 360px; margin: 18px 0 0; color: #a9c8c5; font-size: 11px; line-height: 1.65; }
+      .footer-col h3 { margin: 0 0 14px; color: #fff; font-size: 12px; }
+      .footer-col a { display: block; margin: 9px 0; color: #b8d2d0; font-size: 10px; }
+      .footer-col a:hover { color: var(--lime); }
+      .footer-bottom { display: flex; justify-content: space-between; gap: 20px; margin-top: 36px; padding-top: 21px; border-top: 1px solid rgba(255,255,255,.12); color: #91b0ae; font-size: 9px; }
+
+      .modal-backdrop { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(21,46,48,.52); }
+      .modal-backdrop.show { display: flex; }
+      .modal { width: min(620px, 100%); max-height: calc(100vh - 40px); overflow: auto; border-radius: 22px; background: #fff; box-shadow: 0 30px 80px rgba(9,47,47,.3); }
+      .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 25px; border-bottom: 1px solid var(--line); }
+      .modal-head h2 { margin: 0; font-size: 22px; }
+      .modal-head p { margin: 6px 0 0; color: var(--muted); font-size: 11px; }
+      .modal-close { display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 10px; color: #607175; background: #eef4f3; cursor: pointer; font-size: 21px; }
+      .modal-body { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 25px; }
+      .field.full { grid-column: 1 / -1; }
+      .field label { display: block; margin-bottom: 6px; color: #4b6064; font-size: 10px; font-weight: 700; }
+      .field label span { color: #b74f46; }
+      .field input, .field select { width: 100%; height: 42px; padding: 0 11px; border: 1px solid #d8e5e4; border-radius: 9px; outline: none; color: var(--ink); background: #fff; font-size: 12px; }
+      .field input:focus, .field select:focus { border-color: var(--turquoise); box-shadow: 0 0 0 3px rgba(20,184,173,.12); }
+      .modal-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 25px; border-top: 1px solid var(--line); background: #f9fbfb; }
+      .modal-foot span { color: var(--muted); font-size: 9px; }
+      .modal-buttons { display: flex; gap: 8px; }
+      .toast { position: fixed; right: 22px; bottom: 22px; z-index: 80; max-width: 360px; padding: 14px 17px; border: 1px solid #b8e5df; border-radius: 12px; color: #1c625d; background: #edfbf9; box-shadow: var(--shadow); font-size: 11px; opacity: 0; pointer-events: none; transform: translateY(12px); transition: 180ms ease; }
+      .toast.show { opacity: 1; transform: translateY(0); }
+
+      @media (max-width: 980px) {
+        .nav-links { display: none; position: absolute; top: 76px; right: 20px; left: 20px; flex-direction: column; align-items: stretch; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: var(--shadow); }
+        .nav-links.show { display: flex; }
+        .nav-actions .btn-secondary { display: none; }
+        .menu-toggle { display: block; }
+        .hero-grid { grid-template-columns: 1fr; }
+        .hero-visual { min-height: 430px; }
+        .search-panel { grid-template-columns: 1fr 1fr; }
+        .path-grid { grid-template-columns: repeat(2, 1fr); }
+        .opportunity-grid { grid-template-columns: repeat(2, 1fr); }
+        .prep-grid, .ecosystem { grid-template-columns: 1fr; }
+        .prep-image { min-height: 430px; }
+        .footer-grid { grid-template-columns: 1.2fr repeat(2, .8fr); }
+        .footer-col:last-child { display: none; }
+      }
+
+      @media (max-width: 680px) {
+        .container { width: min(100% - 28px, 1180px); }
+        .top-note { font-size: 10px; }
+        .nav-bar { min-height: 67px; gap: 9px; }
+        .brand { min-width: 0; flex: 1; }
+        .brand img { width: 34px; height: 36px; }
+        .brand strong { font-size: 14px; }
+        .brand span { display: none; }
+        .nav-actions .btn-primary { display: none; }
+        .nav-links { top: 67px; }
+        .hero { padding-top: 48px; }
+        .hero h1 { font-size: 43px; letter-spacing: -1.8px; }
+        .hero-copy { font-size: 15px; }
+        .hero-visual { min-height: 360px; }
+        .hero-photo { inset: 0 0 28px 12px; border-radius: 25px 25px 70px 25px; }
+        .photo-caption { right: 20px; bottom: 54px; left: 42px; }
+        .search-panel { grid-template-columns: 1fr; }
+        .section { padding: 68px 0; }
+        .section-head { align-items: flex-start; flex-direction: column; }
+        .path-grid, .opportunity-grid, .journey, .partner-grid { grid-template-columns: 1fr; }
+        .journey::before { display: none; }
+        .prep-item { grid-template-columns: 48px 1fr; }
+        .prep-owner { grid-column: 2; max-width: none; text-align: left; }
+        .cta-panel { grid-template-columns: 1fr; padding: 30px 24px; }
+        .cta-actions { flex-direction: column; align-items: stretch; }
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+        .footer-grid > div:first-child { grid-column: 1 / -1; }
+        .footer-bottom { flex-direction: column; }
+        .modal-body { grid-template-columns: 1fr; }
+        .field.full { grid-column: auto; }
+        .modal-foot { align-items: stretch; flex-direction: column; }
+        .modal-buttons { display: grid; grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+      <link rel="stylesheet" href="assets/hero-slider.css" />
+  </head>
+  <body>
+    <div class="top-note">Prototype layanan informasi — data peluang dan program pada halaman ini bersifat simulasi.</div>
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a class="brand" href="#beranda" aria-label="SDMK GLOBAL Beranda">
+          <img src="assets/logo-kemenkes.png" alt="Logo Kementerian Kesehatan" />
+          <div><strong>SDMK GLOBAL</strong><span>Kementerian Kesehatan Republik Indonesia</span></div>
+        </a>
+        <nav class="nav-links" id="navLinks" aria-label="Navigasi portal">
+          <a href="#peluang">Peluang</a>
+          <a href="#penyiapan">Program Penyiapan</a>
+          <a href="#alur">Alur Mobilitas</a>
+          <a href="#ekosistem">Ekosistem</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="btn btn-secondary" href="login.html?next=workspace-nakes.html">Masuk Portal</a>
+          <button class="btn btn-primary" type="button" data-open-interest>Daftar Minat</button>
+          <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka navigasi" aria-expanded="false">☰</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="beranda">
+        <div class="container hero-grid">
+          <div>
+            <span class="eyebrow" id="heroEyebrow">Portal Mobilitas Global SDMK</span>
+            <h1><span id="heroTitleBefore" class="hero-title-before">Siapkan kompetensi. Temukan peluang.</span> <span id="heroTitleAccent">Melangkah ke dunia.</span></h1>
+            <p class="hero-copy" id="heroDescription">Satu pintu informasi bagi tenaga medis dan tenaga kesehatan Indonesia untuk mengenali peluang global, mengikuti program penyiapan, dan memantau perjalanan mobilitas secara terarah.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#peluang">Jelajahi Peluang <span aria-hidden="true">→</span></a>
+              <a class="btn btn-secondary" href="#penyiapan">Lihat Program Penyiapan</a>
+            </div>
+            <div class="trust-note"><span><i class="trust-dot"></i> Informasi lintas program</span><span><i class="trust-dot"></i> Terhubung dengan ekosistem SDMK</span><span><i class="trust-dot"></i> Perjalanan terdokumentasi</span></div>
+          </div>
+          <div class="hero-visual" id="heroSlider" role="region" aria-roledescription="carousel" aria-label="Galeri SDMK Global">
+            <div class="hero-photo" id="heroSlides"></div>
+            <div class="slider-controls" id="sliderControls">
+              <button type="button" id="slidePrev" aria-label="Slide sebelumnya">&#8592;</button>
+              <div id="slideDots" class="slider-dots"></div>
+              <button type="button" id="slideNext" aria-label="Slide berikutnya">&#8594;</button>
+              <button type="button" id="slidePause" aria-label="Jeda pergantian otomatis">Jeda</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="container quick-search" aria-label="Pencarian cepat peluang">
+        <form class="search-panel" id="heroSearchForm">
+          <div class="search-field"><label for="heroKeyword">Kata kunci</label><input id="heroKeyword" type="search" placeholder="Profesi, program, atau kompetensi" /></div>
+          <div class="search-field"><label for="heroPath">Jalur</label><select id="heroPath"><option value="all">Semua jalur</option><option value="pmi">PMI Kesehatan</option><option value="magang">Magang</option><option value="kompetensi">Peningkatan Kompetensi</option></select></div>
+          <div class="search-field"><label for="heroCountry">Negara</label><select id="heroCountry"><option value="all">Semua negara</option><option value="jepang">Jepang</option><option value="jerman">Jerman</option><option value="singapura">Singapura</option><option value="online">Online</option></select></div>
+          <button class="btn btn-primary" type="submit">Cari Peluang</button>
+        </form>
+      </div>
+
+      <section class="section section-white" id="jalur">
+        <div class="container">
+          <div class="section-head"><div><span class="section-label">Jalur pengembangan global</span><h2>Pilih perjalanan yang sesuai dengan tujuan kariermu</h2></div><p>Setiap jalur mempunyai persyaratan, program penyiapan, mitra, dan mekanisme keberangkatan yang berbeda.</p></div>
+          <div class="path-grid">
+            <article class="path-card"><span class="path-index">01</span><h3>PMI Kesehatan</h3><p>Peluang kerja luar negeri melalui skema pemerintah maupun mitra penempatan terverifikasi.</p><a class="path-link" href="#peluang" data-set-filter="pmi">Lihat peluang →</a></article>
+            <article class="path-card"><span class="path-index">02</span><h3>Magang Internasional</h3><p>Pengalaman praktik dan pengenalan sistem pelayanan kesehatan di negara tujuan.</p><a class="path-link" href="#peluang" data-set-filter="magang">Lihat peluang →</a></article>
+            <article class="path-card"><span class="path-index">03</span><h3>Peningkatan Kompetensi</h3><p>Pelatihan bahasa, budaya, etik praktik, uji kompetensi, dan pembelajaran berkelanjutan.</p><a class="path-link" href="#peluang" data-set-filter="kompetensi">Lihat program →</a></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section destination-section" id="negara">
+        <div class="container">
+          <div class="section-head"><div><span class="section-label">Negara tujuan</span><h2>Temukan peluang berdasarkan negara</h2></div><p>Pilih negara untuk melihat program, peluang, dan modul pembekalan yang tersedia.</p></div>
+          <div class="destination-grid" id="destinationGrid"></div>
+          <div class="destination-detail" id="destinationDetail" hidden><div><span class="section-label">Pilihan negara</span><h3 id="destinationTitle"></h3><p id="destinationSummary"></p></div><div class="module-grid" id="moduleGrid"></div><button class="btn btn-secondary" id="destinationClear" type="button">Tampilkan semua negara</button></div>
+        </div>
+      </section>
+
+      <section class="section" id="peluang">
+        <div class="container">
+          <div class="section-head"><div><span class="section-label">Eksplorasi peluang</span><h2>Program dan peluang untuk memulai langkah global</h2></div><p>Katalog ini memperlihatkan rancangan cara informasi dari KP2MI, Poltekkes, dan mitra dapat dipublikasikan dalam satu portal.</p></div>
+          <div class="opportunity-toolbar">
+            <div class="filter-chips" role="group" aria-label="Filter jenis peluang">
+              <button class="filter-chip active" type="button" data-filter="all">Semua</button><button class="filter-chip" type="button" data-filter="pmi">PMI Kesehatan</button><button class="filter-chip" type="button" data-filter="magang">Magang</button><button class="filter-chip" type="button" data-filter="kompetensi">Kompetensi</button>
+            </div>
+            <span class="result-note" id="resultNote">Menampilkan 5 contoh peluang</span>
+          </div>
+          <div class="opportunity-grid" id="opportunityGrid">
+            <article class="opportunity-card" data-category="pmi kompetensi" data-country="jepang" data-search="caregiver perawat jepang bahasa kaigo poltekkes"><div class="card-top"><span class="country-code">JP</span><span class="demo-badge">SIMULASI</span></div><h3>Program Persiapan Caregiver Jepang</h3><p>Pelatihan bahasa, budaya kerja, dan kompetensi perawatan lanjut usia sebagai persiapan seleksi.</p><ul class="meta-list"><li>Jalur <strong>PMI Kesehatan</strong></li><li>Penyelenggara <strong>Jejaring Poltekkes</strong></li><li>Format <strong>Hybrid</strong></li></ul><button class="btn btn-secondary" type="button" data-open-interest data-program="Program Persiapan Caregiver Jepang">Daftar minat</button></article>
+            <article class="opportunity-card" data-category="pmi kompetensi" data-country="jerman" data-search="perawat jerman bahasa b1 global skills partnership"><div class="card-top"><span class="country-code">DE</span><span class="demo-badge">SIMULASI</span></div><h3>Bahasa Jerman B1 untuk Perawat</h3><p>Program intensif bahasa dan komunikasi klinis untuk mempersiapkan kandidat perawat menuju Jerman.</p><ul class="meta-list"><li>Jalur <strong>PMI Kesehatan</strong></li><li>Penyelenggara <strong>Mitra bahasa</strong></li><li>Format <strong>Tatap muka</strong></li></ul><button class="btn btn-secondary" type="button" data-open-interest data-program="Bahasa Jerman B1 untuk Perawat">Daftar minat</button></article>
+            <article class="opportunity-card" data-category="magang" data-country="jepang" data-search="internship magang mahasiswa keperawatan jepang poltekkes"><div class="card-top"><span class="country-code">JP</span><span class="demo-badge">SIMULASI</span></div><h3>Internship Keperawatan di Jepang</h3><p>Pengenalan sistem pelayanan kesehatan, budaya kerja, dan praktik perawatan lansia bagi mahasiswa terpilih.</p><ul class="meta-list"><li>Jalur <strong>Magang</strong></li><li>Penyelenggara <strong>Poltekkes & mitra</strong></li><li>Durasi <strong>2 minggu</strong></li></ul><button class="btn btn-secondary" type="button" data-open-interest data-program="Internship Keperawatan di Jepang">Daftar minat</button></article>
+            <article class="opportunity-card" data-category="kompetensi" data-country="online" data-search="orientasi budaya etik praktik sistem kesehatan luar negeri online"><div class="card-top"><span class="country-code">ON</span><span class="demo-badge">SIMULASI</span></div><h3>Orientasi Praktik Kesehatan Global</h3><p>Modul dasar mengenai etik praktik, keselamatan pasien, adaptasi budaya, dan sistem kesehatan tujuan.</p><ul class="meta-list"><li>Jalur <strong>Kompetensi</strong></li><li>Platform <strong>LMS</strong></li><li>Format <strong>Online mandiri</strong></li></ul><button class="btn btn-secondary" type="button" data-open-interest data-program="Orientasi Praktik Kesehatan Global">Daftar minat</button></article>
+            <article class="opportunity-card" data-category="kompetensi" data-country="singapura" data-search="try out kompetensi promteric perawat singapura"><div class="card-top"><span class="country-code">SG</span><span class="demo-badge">SIMULASI</span></div><h3>Try-out Kompetensi Perawat Global</h3><p>Simulasi ujian, pemetaan gap kompetensi, dan rekomendasi pembelajaran sebelum proses seleksi.</p><ul class="meta-list"><li>Jalur <strong>Kompetensi</strong></li><li>Penyelenggara <strong>Kolegium & mitra</strong></li><li>Format <strong>Hybrid</strong></li></ul><button class="btn btn-secondary" type="button" data-open-interest data-program="Try-out Kompetensi Perawat Global">Daftar minat</button></article>
+          </div>
+          <div class="empty-state" id="emptyState">Belum ada contoh peluang yang cocok dengan pencarian tersebut. Coba kata kunci atau filter lain.</div>
+        </div>
+      </section>
+
+      <section class="section section-white" id="penyiapan">
+        <div class="container">
+          <div class="section-head"><div><span class="section-label">Program penyiapan terintegrasi</span><h2>Dari informasi menjadi kesiapan yang terukur</h2></div><p>Program dapat berasal dari Kemenkes, KP2MI, 38 Poltekkes, LPK/P3MI, institusi pendidikan, fasilitas kesehatan, dan mitra global.</p></div>
+          <div class="prep-grid">
+            <div class="prep-image"><img src="assets/sesi-persiapan-nakes.png" alt="Sesi persiapan tenaga kesehatan bersama peserta dan mitra" /><div class="prep-image-copy"><strong>Jejaring penyiapan yang dekat dengan peserta</strong><span>Menghubungkan pusat, Poltekkes, mitra pelatihan, dan pengguna tenaga kesehatan.</span></div></div>
+            <div class="prep-list">
+              <article class="prep-item"><span class="prep-number">01</span><div><h3>Informasi dan asesmen minat</h3><p>Pemetaan profesi, negara tujuan, jalur program, kesiapan dokumen, dan kompetensi awal.</p></div><span class="prep-owner">SDMK GLOBAL & Poltekkes</span></article>
+              <article class="prep-item"><span class="prep-number">02</span><div><h3>Bahasa dan komunikasi klinis</h3><p>Kelas bahasa negara tujuan, terminologi kesehatan, dan komunikasi dengan pasien.</p></div><span class="prep-owner">Poltekkes & LPK</span></article>
+              <article class="prep-item"><span class="prep-number">03</span><div><h3>Budaya, etik, dan sistem kesehatan</h3><p>Pembekalan adaptasi budaya kerja, etik praktik, regulasi, serta keselamatan pasien.</p></div><span class="prep-owner">Kemenkes & Mitra</span></article>
+              <article class="prep-item"><span class="prep-number">04</span><div><h3>Uji kompetensi dan seleksi</h3><p>Try-out, persiapan wawancara, validasi kompetensi, kesehatan, dan persyaratan program.</p></div><span class="prep-owner">Kolegium & User</span></article>
+              <article class="prep-item"><span class="prep-number">05</span><div><h3>Orientasi pra-pemberangkatan</h3><p>Checklist akhir kontrak, visa, asuransi, kontak darurat, dan persetujuan keberangkatan.</p></div><span class="prep-owner">KP2MI & Mitra</span></article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="alur">
+        <div class="container">
+          <div class="section-head"><div><span class="section-label">Satu perjalanan terhubung</span><h2>Didampingi sebelum, selama, dan setelah penempatan</h2></div><p>Profil global menjadi penghubung informasi kesiapan, penempatan, monitoring, re-entry, serta rekognisi pengalaman.</p></div>
+          <div class="journey">
+            <article class="journey-card"><span class="journey-dot">01</span><h3>Pre Migration</h3><p>Registrasi profil, pencarian peluang, pelatihan, seleksi, dan pemenuhan checklist pra-keberangkatan.</p><div class="journey-tags"><span>Profil Global</span><span>Pelatihan</span><span>Seleksi</span></div></article>
+            <article class="journey-card"><span class="journey-dot">02</span><h3>During Migration</h3><p>Data penempatan tersinkronisasi, check-in berkala, dukungan kompetensi, dan pelindungan di luar negeri.</p><div class="journey-tags"><span>Penempatan</span><span>Monitoring</span><span>LMS</span></div></article>
+            <article class="journey-card"><span class="journey-dot">03</span><h3>Post Migration</h3><p>Konfirmasi kepulangan, pemutakhiran pengalaman, pengumpulan portofolio, dan usulan rekognisi SKP.</p><div class="journey-tags"><span>Re-entry</span><span>Portofolio</span><span>SKP</span></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-white" id="ekosistem">
+        <div class="container ecosystem">
+          <div class="ecosystem-copy"><span class="section-label">Ekosistem kolaboratif</span><h2>Satu portal, banyak kontributor informasi</h2><p>Setiap institusi dapat berkontribusi sesuai perannya, sementara Kemenkes menjaga kualitas informasi dan konsistensi perjalanan data SDMK.</p><button class="btn btn-primary" type="button" data-toast="Fitur pendaftaran mitra akan tersedia pada tahap berikutnya.">Pelajari kolaborasi</button></div>
+          <div class="partner-grid">
+            <article class="partner"><span class="partner-code">KEMKES</span><strong>Pengarah dan pengelola</strong><span>Kebijakan, verifikasi, dashboard, dan integrasi.</span></article>
+            <article class="partner"><span class="partner-code">KP2MI</span><strong>Peluang dan penempatan</strong><span>Informasi pekerjaan serta data keberangkatan PMI.</span></article>
+            <article class="partner"><span class="partner-code">38</span><strong>Poltekkes Kemenkes</strong><span>Migrant Career Centre dan pengembangan kompetensi.</span></article>
+            <article class="partner"><span class="partner-code">LPK</span><strong>Bahasa dan pelatihan</strong><span>Penyiapan kompetensi sesuai negara tujuan.</span></article>
+            <article class="partner"><span class="partner-code">P3MI</span><strong>Administrasi penempatan</strong><span>Dokumen, proses seleksi, dan dukungan keberangkatan.</span></article>
+            <article class="partner"><span class="partner-code">USER</span><strong>Fasilitas tujuan</strong><span>Kebutuhan tenaga, seleksi, dan pengembangan karier.</span></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta">
+        <div class="container cta-panel"><div><h2>Mulai siapkan perjalanan karier kesehatan globalmu.</h2><p>Buat profil minat untuk mendapatkan gambaran jalur, program penyiapan, dan peluang yang sesuai.</p></div><div class="cta-actions"><button class="btn btn-light" type="button" data-open-interest>Daftar Minat</button><a class="btn btn-secondary" href="login.html?next=workspace-nakes.html">Masuk Portal</a></div></div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div><div class="footer-brand"><img src="assets/logo-kemenkes.png" alt="Logo Kementerian Kesehatan" /><div><strong>SDMK GLOBAL</strong><span>Sistem Informasi Global Mobilitas SDMK</span></div></div><p class="footer-copy">Prototype portal informasi mobilitas tenaga medis dan tenaga kesehatan Indonesia. Konten peluang pada prototype bukan pengumuman resmi.</p></div>
+          <div class="footer-col"><h3>Jelajahi</h3><a href="#peluang">Peluang global</a><a href="#penyiapan">Program penyiapan</a><a href="#alur">Alur mobilitas</a></div>
+          <div class="footer-col"><h3>Layanan Nakes</h3><a href="#" data-toast="Pusat bantuan akan tersedia pada tahap berikutnya.">Pusat bantuan</a><a href="#" data-toast="Kanal pengaduan akan tersedia pada tahap berikutnya.">Pengaduan</a><a href="login.html?next=workspace-nakes.html">Masuk Workspace</a></div>
+          <div class="footer-col"><h3>Referensi resmi</h3><a href="https://kemkes.go.id/id/profil/filosofi-logo-kementerian-kesehatan" target="_blank" rel="noreferrer">Identitas Kemenkes</a><a href="https://ditjen-sdmk.kemkes.go.id/" target="_blank" rel="noreferrer">Ditjen SDMK</a><a href="https://kemkes.go.id/" target="_blank" rel="noreferrer">Kemenkes RI</a></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 Prototype SDMK GLOBAL</span><span>Logo, palet, dan foto merujuk pada kanal resmi Kementerian Kesehatan.</span></div>
+      </div>
+    </footer>
+
+    <div class="modal-backdrop" id="interestModal" role="dialog" aria-modal="true" aria-labelledby="interestTitle">
+      <form class="modal" id="interestForm">
+        <div class="modal-head"><div><h2 id="interestTitle">Daftar Minat Mobilitas Global</h2><p>Isi informasi awal untuk mendapatkan rekomendasi jalur dan program penyiapan.</p></div><button class="modal-close" id="closeModal" type="button" aria-label="Tutup">×</button></div>
+        <div class="modal-body">
+          <div class="field full"><label>Nama lengkap <span>*</span></label><input required name="name" placeholder="Nama sesuai identitas" /></div>
+          <div class="field"><label>Profesi <span>*</span></label><select required name="profession"><option value="">Pilih profesi</option><option>Dokter</option><option>Dokter Spesialis</option><option>Perawat</option><option>Bidan</option><option>Fisioterapis</option><option>Tenaga kesehatan lainnya</option></select></div>
+          <div class="field"><label>Email aktif <span>*</span></label><input required name="email" type="email" placeholder="nama@email.com" /></div>
+          <div class="field"><label>Jalur yang diminati <span>*</span></label><select required name="path"><option value="">Pilih jalur</option><option>PMI Kesehatan</option><option>Magang</option><option>Peningkatan Kompetensi</option></select></div>
+          <div class="field"><label>Negara tujuan</label><select name="country"><option value="">Belum menentukan</option><option>Jepang</option><option>Jerman</option><option>Singapura</option><option>Arab Saudi</option><option>Negara lainnya</option></select></div>
+          <div class="field full"><label>Program yang dipilih</label><input id="selectedProgram" name="program" placeholder="Opsional" /></div>
+        </div>
+        <div class="modal-foot"><span>Data pada prototype tidak dikirim ke server.</span><div class="modal-buttons"><button class="btn btn-secondary" id="cancelModal" type="button">Batal</button><button class="btn btn-primary" type="submit">Simpan Minat</button></div></div>
+      </form>
+    </div>
+    <div class="toast" id="toast" role="status">Aksi berhasil dijalankan.</div>
+
+    <script src="assets/hero-content.js"></script>
+    <script src="assets/hero-slider.js"></script>
+    <script>
+      (() => { const settings = HeroContent.loadSettings(); document.getElementById('heroEyebrow').textContent = settings.eyebrow; document.getElementById('heroTitleBefore').textContent = settings.titleBefore; document.getElementById('heroTitleAccent').textContent = settings.titleAccent; document.getElementById('heroDescription').textContent = settings.description; })();
+      (() => { const grid = document.getElementById('destinationGrid'), detail = document.getElementById('destinationDetail'), title = document.getElementById('destinationTitle'), summary = document.getElementById('destinationSummary'), modules = document.getElementById('moduleGrid'); const destinations = HeroContent.loadDestinations().filter(d => d.active); destinations.forEach((d) => { const button = document.createElement('button'); button.type = 'button'; button.className = 'destination-card'; button.innerHTML = `<span class="destination-flag" aria-hidden="true">${d.flag}</span><strong></strong><small></small>`; button.querySelector('strong').textContent = d.name; button.querySelector('small').textContent = `${d.modules.length} modul pembekalan`; button.addEventListener('click', () => { title.textContent = d.name; summary.textContent = `Program, peluang, dan pembekalan untuk tenaga kesehatan Indonesia menuju ${d.region || d.name}.`; modules.replaceChildren(...d.modules.map((m, i) => { const el = document.createElement('article'); el.className = 'module-card'; el.innerHTML = `<span>${String(i + 1).padStart(2, '0')}</span><strong></strong>`; el.querySelector('strong').textContent = m; return el; })); detail.hidden = false; document.querySelectorAll('.destination-card').forEach(c => c.classList.remove('selected')); button.classList.add('selected'); detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); document.querySelectorAll('.opportunity-card').forEach(card => { card.hidden = card.dataset.country !== d.name.toLowerCase().replaceAll(' ','-') && !(d.name === 'Germany' && card.dataset.country === 'jerman'); }); }); grid.append(button); }); document.getElementById('destinationClear').addEventListener('click', () => { detail.hidden = true; document.querySelectorAll('.destination-card').forEach(c => c.classList.remove('selected')); document.querySelectorAll('.opportunity-card').forEach(card => card.hidden = false); }); })();
+    </script>
+    <script>
+      const menuToggle = document.getElementById('menuToggle');
+      const navLinks = document.getElementById('navLinks');
+      const opportunityCards = [...document.querySelectorAll('.opportunity-card')];
+      const filterChips = [...document.querySelectorAll('.filter-chip')];
+      const resultNote = document.getElementById('resultNote');
+      const emptyState = document.getElementById('emptyState');
+      const interestModal = document.getElementById('interestModal');
+      const interestForm = document.getElementById('interestForm');
+      const selectedProgram = document.getElementById('selectedProgram');
+      const toast = document.getElementById('toast');
+      let activeFilter = 'all';
+      let activeKeyword = '';
+      let activeCountry = 'all';
+      let toastTimer;
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+
+      function applyFilters() {
+        let visible = 0;
+        opportunityCards.forEach((card) => {
+          const categories = card.dataset.category.split(' ');
+          const matchesType = activeFilter === 'all' || categories.includes(activeFilter);
+          const matchesCountry = activeCountry === 'all' || card.dataset.country === activeCountry;
+          const matchesKeyword = !activeKeyword || card.dataset.search.includes(activeKeyword) || card.textContent.toLowerCase().includes(activeKeyword);
+          card.hidden = !(matchesType && matchesCountry && matchesKeyword);
+          if (!card.hidden) visible += 1;
+        });
+        resultNote.textContent = `Menampilkan ${visible} contoh peluang`;
+        emptyState.classList.toggle('show', visible === 0);
+      }
+
+      function setFilter(filter) {
+        activeFilter = filter;
+        filterChips.forEach((chip) => chip.classList.toggle('active', chip.dataset.filter === filter));
+        applyFilters();
+      }
+
+      function openInterest(program = '') {
+        interestForm.reset();
+        selectedProgram.value = program;
+        interestModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => interestForm.querySelector('input, select')?.focus(), 0);
+      }
+
+      function closeInterest() {
+        interestModal.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      menuToggle.addEventListener('click', () => {
+        const shown = navLinks.classList.toggle('show');
+        menuToggle.setAttribute('aria-expanded', String(shown));
+      });
+      navLinks.addEventListener('click', (event) => {
+        if (event.target.matches('a')) {
+          navLinks.classList.remove('show');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+      filterChips.forEach((chip) => chip.addEventListener('click', () => setFilter(chip.dataset.filter)));
+      document.querySelectorAll('[data-set-filter]').forEach((link) => link.addEventListener('click', () => setFilter(link.dataset.setFilter)));
+      document.getElementById('heroSearchForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        activeKeyword = document.getElementById('heroKeyword').value.trim().toLowerCase();
+        activeFilter = document.getElementById('heroPath').value;
+        activeCountry = document.getElementById('heroCountry').value;
+        filterChips.forEach((chip) => chip.classList.toggle('active', chip.dataset.filter === activeFilter));
+        applyFilters();
+        document.getElementById('peluang').scrollIntoView({ behavior: 'smooth' });
+      });
+      document.querySelectorAll('[data-open-interest]').forEach((button) => button.addEventListener('click', () => openInterest(button.dataset.program || '')));
+      document.querySelectorAll('[data-toast]').forEach((button) => button.addEventListener('click', (event) => {
+        event.preventDefault();
+        showToast(button.dataset.toast);
+      }));
+      document.getElementById('closeModal').addEventListener('click', closeInterest);
+      document.getElementById('cancelModal').addEventListener('click', closeInterest);
+      interestModal.addEventListener('click', (event) => { if (event.target === interestModal) closeInterest(); });
+      interestForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!interestForm.reportValidity()) return;
+        const interest = Object.fromEntries(new FormData(interestForm).entries());
+        sessionStorage.setItem('sigmaInterestDraft', JSON.stringify(interest));
+        window.location.href = 'login.html?next=workspace-nakes.html&source=interest';
+      });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && interestModal.classList.contains('show')) closeInterest(); });
+    </script>
+  </body>
+</html>

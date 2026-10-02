@@ -1,0 +1,21 @@
+name: sdmk-global
+services:
+  web:
+    image: sdmk-global:${IMAGE_TAG:?Set IMAGE_TAG to the release commit}
+    container_name: sdmk-global
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - cankonix-proxy
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: cankonix-proxy
+      traefik.http.routers.sdmk-global.rule: Host(`sdmk-global.cankonix.com`)
+      traefik.http.routers.sdmk-global.entrypoints: websecure
+      traefik.http.routers.sdmk-global.tls: "true"
+      traefik.http.routers.sdmk-global.tls.certresolver: letsencrypt
+      traefik.http.services.sdmk-global.loadbalancer.server.port: "80"
+networks:
+  cankonix-proxy:
+    external: true

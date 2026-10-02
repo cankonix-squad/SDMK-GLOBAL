@@ -1,0 +1,87 @@
+name: Validate and deploy SDMK GLOBAL
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sdmk-global-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check pages and local assets
+        run: python3 scripts/check_static.py
+      - name: Check JavaScript syntax
+        run: |
+          for file in assets/*.js; do node --check "$file"; done
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import subprocess
+          class Scripts(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.active = False; self.code = []
+              def handle_starttag(self, tag, attrs):
+                  if tag == 'script':
+                      self.active = not dict(attrs).get('src'); self.code = []
+              def handle_data(self, data):
+                  if self.active: self.code.append(data)
+              def handle_endtag(self, tag):
+                  if tag == 'script' and self.active:
+                      subprocess.run(['node', '--check'], input=''.join(self.code), text=True, check=True)
+                      self.active = False
+          for page in Path('.').glob('*.html'): Scripts().feed(page.read_text())
+          PY
+      - name: Validate container and server configuration
+        run: |
+          bash -n deploy/release.sh
+          IMAGE_TAG="$GITHUB_SHA" docker compose config --quiet
+          docker build -t sdmk-global:ci .
+          docker run --rm sdmk-global:ci nginx -t
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DEPLOY_HOST: 187.77.127.202
+      DEPLOY_USER: root
+      DEPLOY_PATH: /root/cankonix-node/apps/sdmk-global
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SDMK_DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SDMK_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          test -n "$SSH_PRIVATE_KEY" || { echo 'Missing secret SDMK_DEPLOY_SSH_KEY'; exit 1; }
+          test -n "$SSH_KNOWN_HOSTS" || { echo 'Missing secret SDMK_DEPLOY_KNOWN_HOSTS'; exit 1; }
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Upload immutable release and deploy
+        run: |
+          target="$DEPLOY_USER@$DEPLOY_HOST"
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$target" "mkdir -p '$DEPLOY_PATH/releases/$GITHUB_SHA'"
+          tar -czf - -- *.html assets Dockerfile .dockerignore compose.yaml deploy |
+            ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$target" "tar -xzf - -C '$DEPLOY_PATH/releases/$GITHUB_SHA'"
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$target" "bash '$DEPLOY_PATH/releases/$GITHUB_SHA/deploy/release.sh' '$GITHUB_SHA'"
+      - name: Verify public HTTPS
+        run: |
+          curl --fail --silent --show-error --retry 12 --retry-all-errors --retry-delay 10 --max-time 15 https://sdmk-global.cankonix.com/healthz
+          curl --fail --silent --show-error --max-time 15 -o /dev/null https://sdmk-global.cankonix.com/landing-page.html
+      - name: Remove SSH credentials
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519

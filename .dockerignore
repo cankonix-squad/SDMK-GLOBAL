@@ -1,0 +1,7 @@
+*
+!Dockerfile
+!*.html
+!assets/
+!assets/**
+!deploy/
+!deploy/nginx.conf
